@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1000]C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\DoTheDoodah.csproj</TopNode>
+  <SelectedNode>[0-1012]DoTheDoodah.BlueprintTests.TestImprovedCloak</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\DoTheDoodah.csproj" Expanded="true" />
+    <Node UniqueName="[0-1013]C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\bin\Debug\DoTheDoodah.exe" Expanded="true" />
+    <Node UniqueName="[0-1014]DoTheDoodah" Expanded="true" />
+    <Node UniqueName="[0-1011]DoTheDoodah.BlueprintTests" Expanded="true" />
+    <Node UniqueName="[0-1001]DoTheDoodah.CommonQueries" Expanded="true" />
+    <Node UniqueName="[0-1002]DoTheDoodah.CommonQueries.GetWasteForME" Expanded="true" />
+    <Node UniqueName="[0-1008]DoTheDoodah.FetchEveCentralPriceTests" Expanded="true" />
+    <Node UniqueName="[0-1009]DoTheDoodah.FetchEveCentralPriceTests.Test" Expanded="true" />
+  </Nodes>
+</VisualState>

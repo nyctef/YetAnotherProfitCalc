@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\DoTheDoodah.csproj" total="1" errors="1" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-10-06" time="19:57:13">
+  <environment nunit-version="2.6.1.12217" clr-version="2.0.50727.5456" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\bin\Debug" machine-name="MARK-LEGWARMER" user="Mark" user-domain="mark-legwarmer" />
+  <culture-info current-culture="en-GB" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\DoTheDoodah.csproj" executed="True" result="Failure" success="False" time="0.279" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\bin\Debug\DoTheDoodah.exe" executed="True" result="Failure" success="False" time="0.259" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="DoTheDoodah" executed="True" result="Failure" success="False" time="0.259" asserts="0">
+            <results>
+              <test-suite type="TestFixture" name="BlueprintTests" executed="True" result="Failure" success="False" time="0.258" asserts="0">
+                <results>
+                  <test-case name="DoTheDoodah.BlueprintTests.TestImprovedCloak" executed="True" result="Error" success="False" time="0.241" asserts="0">
+                    <failure>
+                      <message><![CDATA[System.Data.SQLite.SQLiteException : SQLite error
+no such table: invTypes]]></message>
+                      <stack-trace><![CDATA[at System.Data.SQLite.SQLite3.Prepare(SQLiteConnection cnn, String strSql, SQLiteStatement previous, UInt32 timeoutMS, String& strRemain)
+at System.Data.SQLite.SQLiteCommand.BuildNextCommand()
+at System.Data.SQLite.SQLiteDataReader.NextResult()
+at System.Data.SQLite.SQLiteCommand.ExecuteReader(CommandBehavior behavior)
+at System.Data.SQLite.SQLiteCommand.ExecuteScalar()
+at DoTheDoodah.SQLiteDumpWrapper.RunSQLStringQuery(String sql, SQLiteConnection cnn) in c:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\SqliteDumpWrapper.cs:line 72
+at DoTheDoodah.SQLiteDumpWrapper.RunSQLStringQuery(String sql) in c:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\SqliteDumpWrapper.cs:line 63
+at DoTheDoodah.CommonQueries.GetTypeID(String typeName) in c:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\CommonQueries.cs:line 103
+at DoTheDoodah.BlueprintTests.TestImprovedCloak() in c:\Users\Mark\Google Drive\DoTheDoodah\DoTheDoodah\DoTheDoodah\ItemClasses.cs:line 196
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

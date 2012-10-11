@@ -1,0 +1,7 @@
+_ReSharper*
+*/obj/*
+*/bin/*
+packages/*
+TestResults/*
+*.user
+*.suo
