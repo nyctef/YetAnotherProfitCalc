@@ -5,7 +5,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Diagnostics;
 
-namespace DoTheDoodah
+namespace YetAnotherProfitCalc
 {
     /// <summary>
     /// based on http://www.dreamincode.net/forums/topic/157830-using-sqlite-with-c%23/

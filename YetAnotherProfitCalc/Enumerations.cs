@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DoTheDoodah.Enumerations
+namespace YetAnotherProfitCalc.Enumerations
 {
 	public enum ActivityID
 	{

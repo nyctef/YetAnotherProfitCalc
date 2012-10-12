@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using NUnit.Framework;
 
-namespace DoTheDoodah
+namespace YetAnotherProfitCalc
 {
 	public enum PriceType
 	{

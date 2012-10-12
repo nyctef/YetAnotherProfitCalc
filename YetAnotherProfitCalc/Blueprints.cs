@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DoTheDoodah.Enumerations;
+using YetAnotherProfitCalc.Enumerations;
 using NUnit.Framework;
 
-namespace DoTheDoodah
+namespace YetAnotherProfitCalc
 {
 	class BPMaterial : IEquatable<BPMaterial>
 	{
@@ -250,7 +250,7 @@ namespace DoTheDoodah
                 prices.Add(kvp.Key, provider.GetPrice(kvp.Key).ToDecimal()*kvp.Value);
             }
 
-            var total = prices.Aggregate<KeyValuePair<MaterialID, ISK>, decimal>(0m, (current, kvp) => current.ToDecimal() + kvp.Value.ToDecimal());
+            var total = prices.Aggregate(0m, (current, kvp) => current.ToDecimal() + kvp.Value.ToDecimal());
 
             foreach (var kvp in prices)
             {

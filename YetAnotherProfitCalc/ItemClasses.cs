@@ -7,7 +7,7 @@ using System.Diagnostics;
 using NUnit.Framework;
 //using JetBrains.Annotations;
 
-namespace DoTheDoodah
+namespace YetAnotherProfitCalc
 {
 
 	/// <summary>

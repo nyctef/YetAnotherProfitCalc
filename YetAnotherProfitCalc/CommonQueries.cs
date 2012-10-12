@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using DoTheDoodah.Enumerations;
 using NUnit.Framework;
 using System.Data.SQLite;
-using DoTheDoodah;
+using YetAnotherProfitCalc;
+using YetAnotherProfitCalc.Enumerations;
 
-namespace DoTheDoodah
+namespace YetAnotherProfitCalc
 {
     public static class ObjectExtensions
     {

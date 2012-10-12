@@ -5,3 +5,6 @@ packages/*
 TestResults/*
 *.user
 *.suo
+Build/*
+UpgradeLog*
+_UpgradeReport*
