@@ -78,10 +78,20 @@ namespace YetAnotherProfitCalc
     }
 
 	public class GroupID : TypeID
-	{
-		public static readonly GroupID DataInterfaces = new GroupID(716);
+    {
+        #region groupIDs
+        public static readonly GroupID DataInterfaces = new GroupID(716);
+        public static readonly GroupID Battlecruiser = new GroupID(419);
+        public static readonly GroupID Battleship = new GroupID(27);
+        public static readonly GroupID Cruiser = new GroupID(26);
+        public static readonly GroupID Industrial = new GroupID(28);
+        public static readonly GroupID Frigate = new GroupID(25);
+        public static readonly GroupID Destroyer = new GroupID(420);
+        public static readonly GroupID Freighter = new GroupID(513);
 
-		public GroupID(int value) : base(value) { }
+        #endregion
+
+        public GroupID(int value) : base(value) { }
 	}
 
 	public class CategoryID : TypeID

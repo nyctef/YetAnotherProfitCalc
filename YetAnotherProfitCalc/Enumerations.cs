@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace YetAnotherProfitCalc.Enumerations
 {
-	public enum ActivityID
+	public enum ActivityIDs
 	{
 		None = 0,
 		Manufacturing = 1,
@@ -18,4 +18,9 @@ namespace YetAnotherProfitCalc.Enumerations
 		ReverseEngineering = 7,
 		Invention = 8,
 	}
+
+    public enum AttributeIDs
+    {
+        MetaLevel = 633,
+    }
 }

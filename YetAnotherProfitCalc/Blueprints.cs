@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YetAnotherProfitCalc.Enumerations;
 using NUnit.Framework;
+using System.Text.RegularExpressions;
 
 namespace YetAnotherProfitCalc
 {
@@ -62,9 +63,8 @@ namespace YetAnotherProfitCalc
 
 	public class BPDetails
 	{
-		// out int productionTime, out int researchProductivityTime, out int researchMaterialTime, out int researchCopyTime, out int researchTechTime, out int productivityModifier, out int materialModifier, out int wasteFactor, out int maxProductionLimit
 		public readonly int productionTime;
-		public readonly int researchProductivityType;
+		public readonly int researchProductivityTime;
 		public readonly int researchMaterialTime;
 		public readonly int researchCopyTime;
 		public readonly int researchTechTime;
@@ -76,7 +76,7 @@ namespace YetAnotherProfitCalc
 		public BPDetails(int productionTime, int researchProductivityTime, int researchMaterialTime, int researchCopyTime, int researchTechTime, int productivityModifier, int materialModifier, int wasteFactor, int maxProductionLimit)
 		{
 			this.productionTime = productionTime;
-			this.researchProductivityType = researchProductivityType;
+			this.researchProductivityTime = researchProductivityTime;
 			this.researchMaterialTime = researchMaterialTime;
 			this.researchCopyTime = researchCopyTime;
 			this.researchTechTime = researchTechTime;
@@ -101,23 +101,109 @@ namespace YetAnotherProfitCalc
 		{
 			MatLevel = matlevel;
 			ProdLevel = prodLevel;
-			Product = CommonQueries.GetProductFromBlueprint(bpID);
-			Materials = CommonQueries.GetMaterialsRaw(Product).Union(CommonQueries.GetMaterialsExtra(bpID)).ToList();
-			Details = CommonQueries.GetBlueprintDetails(bpID);
+            Product = CommonQueries.GetProductFromBlueprint(bpID);
+            Details = CommonQueries.GetBlueprintDetails(bpID);
 
-			//var extraMats = CommonQueries.GetMaterialsExtra(bpID, ActivityID.Invention).ToList();
-            //InventionMaterials = extraMats
-            //    .Where(m=>m.matID.GetGroupID() != GroupID.DataInterfaces) // data dump is terrible and gives data interfaces a damagePerJob of 100%
-            //    .ToList();
-            //InventionInterface = extraMats
-            //    .Single(m => m.matID.GetGroupID() == GroupID.DataInterfaces)
-            //    .matID;
+			Materials = CommonQueries.GetMaterialsRaw(Product)
+                .AdjustForMEWastage(matlevel, Details.wasteFactor)
+                .Union(CommonQueries.GetMaterialsExtra(bpID))
+                .ToList();
 
-			// TODO: ME waste
-			// TODO: prod times
-			// TODO: skills
-		}
+			var extraMats = CommonQueries.GetMaterialsExtra(bpID, ActivityIDs.Invention).ToList();
+            if (extraMats.Any())
+            {
+                // data dump is terrible and gives data interfaces a damagePerJob of 100% :ccp:
+                InventionMaterials = extraMats
+                    .Where(m => m.matID.GetGroupID() != GroupID.DataInterfaces) 
+                    .ToList();
+                InventionInterface = extraMats
+                    .Single(m => m.matID.GetGroupID() == GroupID.DataInterfaces)
+                    .matID;
+            }
+        }
+
+        #region detail methods
+
+        public bool HasT2Version() 
+        {
+            return CommonQueries.GetT2VersionOfT1(Product).ToInt() != 0;
+        }
+
+        public decimal InventionChance(int encryptionSkillLevel, int datacore1SkillLevel, int datacore2SkillLevel, int itemMetaLevel = 0) 
+        {
+            return BaseInventionChance() * (1 + 0.01m*encryptionSkillLevel) * (1+(datacore1SkillLevel + datacore2SkillLevel) *(0.1m/(5-itemMetaLevel)));
+        }
+
+        public decimal BaseInventionChance() 
+        {
+            var typeID = Product;
+            var groupID = CommonQueries.GetGroupID(Product);
+
+            if (groupID == GroupID.Battlecruiser || groupID == GroupID.Battleship ||
+                typeID == CommonQueries.GetTypeID("Covetor")) 
+            {
+                return 0.2m;
+            }
+
+            if (groupID == GroupID.Cruiser || groupID == GroupID.Industrial ||
+                typeID == CommonQueries.GetTypeID("Retriever")) 
+            {
+                return 0.25m;
+            }
+
+            if (groupID == GroupID.Frigate || groupID == GroupID.Destroyer ||
+                groupID == GroupID.Freighter || typeID == CommonQueries.GetTypeID("Procurer"))
+            {
+                return 0.3m;
+            }
+
+            if (HasT2Version()) 
+            {
+                return 0.4m;
+            }
+
+            return 0;
+        }
+
+        public decimal MEResearchTime(int metallurgySkillLevel, decimal researchSlotModifier = 1, decimal implantModifier = 1) 
+        {
+            return Details.researchMaterialTime * (1 - (0.05m * metallurgySkillLevel)) * researchSlotModifier * implantModifier;
+        }
+
+        public decimal PEResearchTime(int researchSkillLevel, decimal researchSlotModifier = 1, decimal implantModifier = 1)
+        {
+            return Details.researchProductivityTime * (1 - (0.05m * researchSkillLevel)) * researchSlotModifier * implantModifier;
+        }
+
+        /// <summary>
+        /// Copy time for a max-run copy
+        /// </summary>
+        public decimal CopyTime(int scienceSkillLevel = 5, decimal copySlotModifier = 1, decimal implantModifier = 1)
+        {
+            // From wiki.eve-id.net: "Note that [researchCopyTime] is the amount of time taken to copy a number of runs equal to 
+            // half the maxProductionLimit, whether as multiple runs on one copy or as one run each on multiple copies." :ccp:
+            return Details.researchCopyTime * 2 * (1 - (0.04m * scienceSkillLevel)) * copySlotModifier * implantModifier;
+        }
+             
+        public decimal InventionTime(int inventionSlotModifier = 1, int implantModifier = 1)
+        {
+            return Details.researchTechTime * inventionSlotModifier * implantModifier;
+        }
+
+        public T2Blueprint GetInventionResult(out int outputRuns, int inputRuns = -1, int MLmod = -4, int PLmod = -4, int runsMod = 0)
+        {
+            if (inputRuns == -1) inputRuns = Details.maxProductionLimit;
+            var t2bpID = CommonQueries.GetBlueprintFromProduct(CommonQueries.GetT2VersionOfT1(Product));
+            var t2bp = new T2Blueprint(t2bpID, MLmod, PLmod);
+            outputRuns = (int)((inputRuns / (decimal)Details.maxProductionLimit) * (t2bp.Details.maxProductionLimit / 10.0m)) + runsMod;
+            outputRuns = Math.Min(Math.Max(outputRuns, 1), t2bp.Details.maxProductionLimit);
+            return t2bp;
+        }
+
+        #endregion
+        
 	}
+	
 
 	class T2Blueprint : IBlueprint
 	{
@@ -140,8 +226,6 @@ namespace YetAnotherProfitCalc
 
 			Materials = new List<BPMaterial>();
 
-			var meWastageFactor = 1 + CommonQueries.GetWasteForME(matLevel, Details.wasteFactor);
-
 			var rawMaterials = CommonQueries.GetMaterialsRaw(Product);
 			var extraMaterials = CommonQueries.GetMaterialsExtra(bpID);
 			var t1Materials = CommonQueries.GetMaterialsRaw(t1ID);
@@ -149,7 +233,7 @@ namespace YetAnotherProfitCalc
 			// TODO: currently this assumes there is always exactly 1 recyclable material which is the t1 item
 			var rawMaterialsAfterRecycling = rawMaterials.Subtract(t1Materials);
 			// adjust for ME
-			var adjustedRawMaterials = rawMaterialsAfterRecycling.Select(m => new BPMaterial(m.matID, (long)(m.quantity * meWastageFactor)));
+            var adjustedRawMaterials = rawMaterialsAfterRecycling.AdjustForMEWastage(matLevel, Details.wasteFactor);
 
 			Materials = adjustedRawMaterials.Union(extraMaterials).ToList();
 		}
@@ -164,7 +248,8 @@ namespace YetAnotherProfitCalc
 
 			foreach (var baseType in baseMats)
 			{
-				var newQuantity = baseType.quantity - toSubDic[baseType.matID].quantity;
+				var newQuantity = toSubDic.ContainsKey(baseType.matID) ? baseType.quantity - toSubDic[baseType.matID].quantity
+                                                                       : baseType.quantity;
 				Debug.Assert(newQuantity >= 0);
 				if (newQuantity > 0)
 				{
@@ -174,6 +259,12 @@ namespace YetAnotherProfitCalc
 
 			return result;
 		}
+
+        public static List<BPMaterial> AdjustForMEWastage(this IEnumerable<BPMaterial> mats, int ME, int wasteFactor = 10)
+        {
+            var meWastageFactor = 1 + CommonQueries.GetWasteForME(ME, wasteFactor);
+            return mats.Select(m => new BPMaterial(m.matID, (long)(m.quantity * meWastageFactor))).ToList();
+        }
 
 		public static ISK GetPrice(/* [NotNull] */ this IEnumerable<BPMaterial> materials, /* [NotNull] */ IPriceProvider priceProvider)
 		{
@@ -190,6 +281,55 @@ namespace YetAnotherProfitCalc
 			var price = priceProvider.GetPrice(mat.matID).ToDecimal();
 			return price * mat.quantity * mat.damagePerJob;
 		}
+
+        public static ISK GetT2BpcCost(this T1Blueprint bp, IPriceProvider priceProvider, int encryptorSkillLevel, int datacore1SkillLevel, int datacore2SkillLevel, int addedItemMetaLevel = 0, decimal decryptorModifier = 1)
+        {
+            if (!bp.HasT2Version()) throw new ArgumentException("bp", "blueprint must have a t2 version");
+            var singleTryCost = bp.InventionMaterials.GetPrice(priceProvider);
+            decimal inventionChance = bp.InventionChance(encryptorSkillLevel, datacore1SkillLevel, datacore2SkillLevel, addedItemMetaLevel);
+            return singleTryCost.ToDecimal() / inventionChance;
+        }
+
+        public static decimal ManufacturingTime(this IBlueprint bp, int industrySkill = 5, decimal implantModifier = 1, decimal productionSlotModifier = 1)
+        {
+            decimal productionTimeModifier = (1 - (0.04m * industrySkill)) * implantModifier * productionSlotModifier;
+            decimal PEFactor = bp.ProdLevel < 0 ? (bp.ProdLevel - 1) : (bp.ProdLevel / (decimal)(1 + bp.ProdLevel));
+            return bp.Details.productionTime * (1 - ((decimal)bp.Details.productivityModifier / (decimal)bp.Details.productionTime) * (PEFactor)) * productionTimeModifier;
+        }
+
+        public static string FormatSeconds(this decimal _seconds) 
+        {
+            int seconds = (int)(_seconds);
+            int hours = (int)(seconds / 3600);
+            seconds -= (hours * 3600);
+            int minutes = (int)(seconds / 60);
+            seconds -= (minutes * 60);
+            string result = "";
+            if (hours > 0) result += hours + "h ";
+            if (minutes > 0) result += minutes + "m ";
+            if (seconds > 0) result += seconds + "s";
+            if (!String.IsNullOrWhiteSpace(result)) return result.Trim();
+            return "0s";
+        }
+
+        public static string Format(this ISK isk)
+        {
+            return isk.ToDecimal().FormatISK();
+        }
+
+        public static string FormatISK(this decimal isk)
+        {
+            return isk.ToString("N2");
+        }
+
+        public static void AddToCount<T>(this Dictionary<T, int> dic, T key, int count = 1)
+        {
+            if (!dic.ContainsKey(key))
+            {
+                dic.Add(key, 0);
+            }
+            dic[key] += count;
+        }
 	}
 
 	public class BlueprintTests
@@ -234,7 +374,7 @@ namespace YetAnotherProfitCalc
                 {
                     if (!totals.ContainsKey(capMatMat.matID))
                         totals.Add(capMatMat.matID, 0);
-                    totals[capMatMat.matID] += capMatMat.quantity;
+                    totals[capMatMat.matID] += capMatMat.quantity * capMat.quantity;
                 }
             }
 
@@ -271,5 +411,92 @@ namespace YetAnotherProfitCalc
 			Console.WriteLine(result);
 		}
 
+        [TestCase("Medium Shield Extender I")]
+        [TestCase("Warrior I")]
+        public void TestInventionProfit(string typeName)
+        {
+            var priceProvider = new BasicPriceCache(new BasicEveCentralJitaPriceProvider());
+            var matID = CommonQueries.GetMaterialID(typeName);
+            var bp = new T1Blueprint(CommonQueries.GetBlueprintFromProduct(matID), 0, 0);
+            var t2Cost = bp.GetT2BpcCost(priceProvider, 4, 4, 4);
+            Console.WriteLine("inventionCost: " + t2Cost.Format());
+            int t2runs;
+            var t2bp = bp.GetInventionResult(out t2runs);
+            var t2ProductCost = priceProvider.GetPrice(t2bp.Product).ToDecimal();
+            Console.WriteLine("t2ProductCost: "+ t2ProductCost.FormatISK());
+            var t2MatsCost = t2bp.Materials.GetPrice(priceProvider).ToDecimal();
+            Console.WriteLine("t2MatsCost: "+ t2MatsCost.FormatISK());
+            var t2Revenue = t2ProductCost - t2MatsCost;
+            var profit = t2Revenue.ToDecimal()*t2runs - t2Cost.ToDecimal();
+            Console.WriteLine("profit: " + profit.FormatISK());
+            Console.WriteLine("copying time: "+(bp.CopyTime()).FormatSeconds());
+            Console.WriteLine("invention time: " + (bp.InventionTime()/bp.InventionChance(4,4,4)).FormatSeconds());
+            Console.WriteLine("t2 manufacture time: " + (t2bp.ManufacturingTime()*t2runs).FormatSeconds());
+        }
+
+        [TestCase(@" Tracking Computer II	1	Tracking Computer	
+Scourge Torpedo	982	Torpedo	
+Mjolnir Torpedo	982	Torpedo	
+Caldari Navy Inferno Torpedo	982	Torpedo	
+Targeting Range Dampening Script	4	Sensor Dampener Script	
+Scan Resolution Dampening Script	4	Sensor Dampener Script	
+Velator	1	Rookie ship	
+Medium Core Defense Field Extender I	3	Rig Shield	
+Medium Capacitor Control Circuit I	5	Rig Energy Grid	
+Prototype 100MN Microwarpdrive I	1	Propulsion Module	
+1400mm Howitzer Artillery II	1	Projectile Weapon	
+1400mm Howitzer Artillery II	1	Projectile Weapon	
+1400mm Howitzer Artillery II	1	Projectile Weapon	
+Heavy Missile Launcher II	1	Missile Launcher Heavy	
+Heavy Missile Launcher II	1	Missile Launcher Heavy	
+'Malkuth' Heavy Missile Launcher I	1	Missile Launcher Heavy	
+'Malkuth' Heavy Missile Launcher I	1	Missile Launcher Heavy	
+ Civilian Miner	1	Mining Laser	Fitted
+ Tritanium	1	Mineral	
+250mm Railgun II	1	Hybrid Weapon	
+Federation Navy Antimatter Charge M	40	Hybrid Charge	
+Antimatter Charge M	1200	Hybrid Charge	
+Scourge Heavy Missile	24500	Heavy Missile	
+Nova Heavy Missile	23934	Heavy Missile	
+Mjolnir Heavy Missile	24000	Heavy Missile	
+Inferno Heavy Missile	23000	Heavy Missile	
+Caldari Navy Scourge Heavy Missile	3568	Heavy Missile	
+Caldari Navy Nova Heavy Missile	1784	Heavy Missile	
+Caldari Navy Mjolnir Heavy Missile	1743	Heavy Missile	
+Caldari Navy Inferno Heavy Missile	2032	Heavy Missile	
+Gyrostabilizer II	1	Gyrostabilizer	
+ Civilian Light Electron Blaster	1	Energy Weapon	Fitted
+Signal Distortion Amplifier II	1	ECM Stabilizer	
+ECM - Spatial Destabilizer II	1	ECM	
+ECM - Spatial Destabilizer II	1	ECM	
+ECM - Spatial Destabilizer II	1	ECM	
+ECM - Multispectral Jammer II	1	ECM	
+Buzzard	1	Covert Ops	
+Capacitor Power Relay II	1	Capacitor Power Relay	
+Energized Adaptive Nano Membrane II	1	Armor Plating Energized	
+Armor Thermic Hardener II	1	Armor Hardener	")]
+        public void TestContractValue(string contractPaste)
+        {
+            var mats = new Dictionary<MaterialID, int>();
+            var reg = new Regex(@"([a-zA-Z\d'\- ]*)\t\d+\.*");
+            foreach (var line in contractPaste.Split(new[]{'\n'})) 
+            {
+                if (String.IsNullOrWhiteSpace(line)) continue;
+                var match = reg.Match(line).Groups[1];
+                mats.AddToCount(CommonQueries.GetMaterialID(match.Value.Trim()));
+            }
+
+            var provider = new BasicEveCentralDelvePriceProvider();
+            var prices = new Dictionary<MaterialID, ISK>();
+            foreach (var kvp in mats.OrderBy(kvp => CommonQueries.GetTypeName(kvp.Key)))
+            {
+                prices.Add(kvp.Key, provider.GetPrice(kvp.Key).ToDecimal() * kvp.Value);
+                Console.WriteLine(CommonQueries.GetTypeName(kvp.Key) + " x" + kvp.Value + " : "+ prices[kvp.Key].Format());
+            }
+
+            var total = prices.Aggregate(0m, (current, kvp) => current.ToDecimal() + kvp.Value.ToDecimal());
+
+            Console.WriteLine("total: "+ total.FormatISK());
+        }
 	}
 }

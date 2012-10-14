@@ -53,7 +53,7 @@ WHERE m.typeID = " + material + ";";
             }
         }
 
-        public static IEnumerable<BPMaterial> GetMaterialsExtra(BlueprintID bpID, ActivityID activity = ActivityID.Manufacturing)
+        public static IEnumerable<BPMaterial> GetMaterialsExtra(BlueprintID bpID, ActivityIDs activity = ActivityIDs.Manufacturing)
         {
             using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
             {
@@ -116,15 +116,30 @@ WHERE r.typeID = {0}
             return new MaterialID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
         }
 
+        /// <summary>
+        /// Note: this assumes there exists only one t2 version, which is untrue for some items 
+        /// eg fast frigates (combat/fleet inties) and prototype cloaks (improved/covops)
+        /// </summary>
 		public static MaterialID GetT2VersionOfT1(MaterialID matID)
 		{
-			return GetMetaXVersionOfT1(matID, 5);
+            var result = GetMetaGroupVersionOfT1(matID, 2); // note metaGroup not metaLevel
+            if (result.Any()) return result.First();
+            return new MaterialID(0);
 		}
 
-		public static MaterialID GetMetaXVersionOfT1(MaterialID matID, int metaVersion)
+		public static IEnumerable<MaterialID> GetMetaGroupVersionOfT1(MaterialID matID, int metaGroupID)
 		{
-			var query = @"select typeID from invMetaTypes where parentTypeID = " + matID + " and metaGroupID = " + metaVersion;
-			return new MaterialID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
+            using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
+            {
+                cnn.Open();
+                var query = @"select typeID from invMetaTypes where parentTypeID = " + matID + " and metaGroupID = " + metaGroupID;
+                var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
+                var t1Name = CommonQueries.GetTypeName(matID);
+                while (results.Read())
+                {
+                    yield return new MaterialID(results["typeID"].ToInt());
+                }
+            }
 		}
 
         public static string GetTypeName(TypeID matID)
@@ -135,7 +150,7 @@ WHERE r.typeID = {0}
 
         public static TypeID GetTypeID(string typeName)
         {
-            var query = @"select typeID from invTypes where typeName = """ + typeName + @""";";
+            var query = @"select typeID from invTypes where typeName = """ + typeName + @""" COLLATE NOCASE;";
             return new TypeID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
         }
 
@@ -146,7 +161,7 @@ WHERE r.typeID = {0}
 
         public static BlueprintID GetBlueprintID(string typeName)
         {
-            var query = @"select typeID from invTypes where typeName = """ + typeName + @" Blueprint"";";
+            var query = @"select typeID from invTypes where typeName = """ + typeName + @" Blueprint"" COLLATE NOCASE;";
             return new BlueprintID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
         }
 
