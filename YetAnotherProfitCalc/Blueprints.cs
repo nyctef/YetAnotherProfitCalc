@@ -423,58 +423,18 @@ namespace YetAnotherProfitCalc
             int t2runs;
             var t2bp = bp.GetInventionResult(out t2runs);
             var t2ProductCost = priceProvider.GetPrice(t2bp.Product).ToDecimal();
-            Console.WriteLine("t2ProductCost: "+ t2ProductCost.FormatISK());
+            Console.WriteLine("t2ProductCost: " + t2ProductCost.FormatISK());
             var t2MatsCost = t2bp.Materials.GetPrice(priceProvider).ToDecimal();
-            Console.WriteLine("t2MatsCost: "+ t2MatsCost.FormatISK());
+            Console.WriteLine("t2MatsCost: " + t2MatsCost.FormatISK());
             var t2Revenue = t2ProductCost - t2MatsCost;
-            var profit = t2Revenue.ToDecimal()*t2runs - t2Cost.ToDecimal();
+            var profit = t2Revenue.ToDecimal() * t2runs - t2Cost.ToDecimal();
             Console.WriteLine("profit: " + profit.FormatISK());
-            Console.WriteLine("copying time: "+(bp.CopyTime()).FormatSeconds());
-            Console.WriteLine("invention time: " + (bp.InventionTime()/bp.InventionChance(4,4,4)).FormatSeconds());
-            Console.WriteLine("t2 manufacture time: " + (t2bp.ManufacturingTime()*t2runs).FormatSeconds());
+            Console.WriteLine("copying time: " + (bp.CopyTime()).FormatSeconds());
+            Console.WriteLine("invention time: " + (bp.InventionTime() / bp.InventionChance(4, 4, 4)).FormatSeconds());
+            Console.WriteLine("t2 manufacture time: " + (t2bp.ManufacturingTime() * t2runs).FormatSeconds());
         }
 
-        [TestCase(@" Tracking Computer II	1	Tracking Computer	
-Scourge Torpedo	982	Torpedo	
-Mjolnir Torpedo	982	Torpedo	
-Caldari Navy Inferno Torpedo	982	Torpedo	
-Targeting Range Dampening Script	4	Sensor Dampener Script	
-Scan Resolution Dampening Script	4	Sensor Dampener Script	
-Velator	1	Rookie ship	
-Medium Core Defense Field Extender I	3	Rig Shield	
-Medium Capacitor Control Circuit I	5	Rig Energy Grid	
-Prototype 100MN Microwarpdrive I	1	Propulsion Module	
-1400mm Howitzer Artillery II	1	Projectile Weapon	
-1400mm Howitzer Artillery II	1	Projectile Weapon	
-1400mm Howitzer Artillery II	1	Projectile Weapon	
-Heavy Missile Launcher II	1	Missile Launcher Heavy	
-Heavy Missile Launcher II	1	Missile Launcher Heavy	
-'Malkuth' Heavy Missile Launcher I	1	Missile Launcher Heavy	
-'Malkuth' Heavy Missile Launcher I	1	Missile Launcher Heavy	
- Civilian Miner	1	Mining Laser	Fitted
- Tritanium	1	Mineral	
-250mm Railgun II	1	Hybrid Weapon	
-Federation Navy Antimatter Charge M	40	Hybrid Charge	
-Antimatter Charge M	1200	Hybrid Charge	
-Scourge Heavy Missile	24500	Heavy Missile	
-Nova Heavy Missile	23934	Heavy Missile	
-Mjolnir Heavy Missile	24000	Heavy Missile	
-Inferno Heavy Missile	23000	Heavy Missile	
-Caldari Navy Scourge Heavy Missile	3568	Heavy Missile	
-Caldari Navy Nova Heavy Missile	1784	Heavy Missile	
-Caldari Navy Mjolnir Heavy Missile	1743	Heavy Missile	
-Caldari Navy Inferno Heavy Missile	2032	Heavy Missile	
-Gyrostabilizer II	1	Gyrostabilizer	
- Civilian Light Electron Blaster	1	Energy Weapon	Fitted
-Signal Distortion Amplifier II	1	ECM Stabilizer	
-ECM - Spatial Destabilizer II	1	ECM	
-ECM - Spatial Destabilizer II	1	ECM	
-ECM - Spatial Destabilizer II	1	ECM	
-ECM - Multispectral Jammer II	1	ECM	
-Buzzard	1	Covert Ops	
-Capacitor Power Relay II	1	Capacitor Power Relay	
-Energized Adaptive Nano Membrane II	1	Armor Plating Energized	
-Armor Thermic Hardener II	1	Armor Hardener	")]
+        [TestCase(@" Drake 1 Battlecruiser")]
         public void TestContractValue(string contractPaste)
         {
             var mats = new Dictionary<MaterialID, int>();
