@@ -7,8 +7,8 @@
     <ProjectGuid>{EAD06C5C-7759-4511-B818-0A5B557B94F8}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DoTheDoodah</RootNamespace>
-    <AssemblyName>DoTheDoodah</AssemblyName>
+    <RootNamespace>YetAnotherProfitCalc</RootNamespace>
+    <AssemblyName>YetAnotherProfitCalc</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -58,6 +58,7 @@
     <Compile Include="Enumerations.cs" />
     <Compile Include="FetchEveCentralPrice.cs" />
     <Compile Include="ItemClasses.cs" />
+    <Compile Include="ManufacturingSpreadsheet.cs" />
     <Compile Include="Prices.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

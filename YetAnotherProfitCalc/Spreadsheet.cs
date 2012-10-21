@@ -11,6 +11,7 @@ namespace YetAnotherProfitCalc
     {
         string Export();
         string GetCellLocation(Cell cell);
+        Cell AddCell(Cell cell, int xpos, int ypos);
     }
 
     public abstract class Cell
@@ -25,13 +26,14 @@ namespace YetAnotherProfitCalc
         private int xmax = 0;
         private int ymax = 0;
 
-        public void AddCell(Cell cell, int xpos, int ypos) 
+        public Cell AddCell(Cell cell, int xpos, int ypos) 
         {
             var pos = Tuple.Create(xpos, ypos);
             spreadsheet.Add(pos, cell);
             cellpositions.Add(cell, pos);
             if (xpos > xmax) xmax = xpos;
             if (ypos > ymax) ymax = ypos;
+            return cell;
         }
 
         private Dictionary<Tuple<int, int>, Cell> spreadsheet   = new Dictionary<Tuple<int, int>, Cell>();
@@ -58,8 +60,12 @@ namespace YetAnotherProfitCalc
 
         public string GetCellLocation(Cell cell)
         {
-            var pos = cellpositions[cell];
-            return alpha[pos.Item1].ToString() + (pos.Item2 + 1);
+            return GetCellLocation(cellpositions[cell]);            
+        }
+
+        public string GetCellLocation(Tuple<int, int> pos)
+        {
+            return "$" + alpha[pos.Item1] + "$" + (pos.Item2 + 1);
         }
     }
 
@@ -101,6 +107,23 @@ namespace YetAnotherProfitCalc
         }
     }
 
+    public class EveCentralCell : Cell
+    {
+        private string text;
+
+        public EveCentralCell(TypeID typeId, int region = -1, int system = 30000142, PriceType type = PriceType.sell, PriceMeasure measure = PriceMeasure.min)
+        {
+            var uri = FetchEveCentralPrice.GetUriForRequest(typeId.ToInt(), region, system);
+            var xpath = "/evec_api/marketstat/type/"+type.ToString()+"/"+measure.ToString();
+            text = "=ImportXML(\"" + uri + "&clock=\"&GoogleClock(), \"" + xpath + "\")";
+        }
+
+        public override string CellText(Spreadsheet spreadsheet)
+        {
+            return text;
+        }
+    }
+
     public class SpreadsheetTests
     {
         [Test]
@@ -116,6 +139,13 @@ namespace YetAnotherProfitCalc
             spreadsheet.AddCell(cell3, 1, 1);
 
             Assert.AreEqual("1\t2\t\n\t=A1+B1\t\n", spreadsheet.Export());
+        }
+
+        [Test]
+        public void ECCellTest()
+        {
+            var cell1 = new EveCentralCell(new TypeID(1), 2, 3, PriceType.sell, PriceMeasure.avg);
+            Assert.AreEqual("=ImportXML(\"http://api.eve-central.com/api/marketstat?typeid=1&regionlimit=2&usesystem=3&clock=\"&GoogleClock(), \"/evec_api/marketstat/type/sell/avg\")", cell1.CellText(null));
         }
 
     }
