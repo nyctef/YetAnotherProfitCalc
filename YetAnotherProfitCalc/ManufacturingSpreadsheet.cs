@@ -15,9 +15,9 @@ namespace YetAnotherProfitCalc
             var spreadsheet = new TSVSpreadsheet();
 
             spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(bp.Product)), 0, 0);
-            var quantity = spreadsheet.AddCell(new SimpleCell("100"), 0, 1);
-            var brokerFee = spreadsheet.AddCell(new SimpleCell("0.0045"), 1, 0);
-            var transactionTax = spreadsheet.AddCell(new SimpleCell("0.0105"), 2, 0);
+            var quantity = new SimpleCell("100");
+            var brokerFee = new SimpleCell("0.0045");
+            var transactionTax = new SimpleCell("0.0105");
 
             spreadsheet.AddCell(new SimpleCell("Quantity"), 1, 1);
             spreadsheet.AddCell(new SimpleCell("Buy"), 2, 1);
@@ -85,7 +85,22 @@ namespace YetAnotherProfitCalc
             rowOffset++;
             var profit = spreadsheet.AddCell(new FormulaCell("={0}-{1}", totalValue, totalTotalCost), 9, rowOffset);
             spreadsheet.AddCell(new FormulaCell("={0}/{1}", profit, totalValue), 10, rowOffset);
-            
+
+            rowOffset--;
+
+            spreadsheet.AddCell(new SimpleCell("Number of runs: "), 0, rowOffset);
+            spreadsheet.AddCell(quantity, 1, rowOffset);
+            rowOffset++;
+            spreadsheet.AddCell(new SimpleCell("Broker fee: "), 0, rowOffset);
+            spreadsheet.AddCell(brokerFee, 1, rowOffset);
+            rowOffset++;
+            spreadsheet.AddCell(new SimpleCell("Transaction tax: "), 0, rowOffset);
+            spreadsheet.AddCell(transactionTax, 1, rowOffset);
+            rowOffset++;
+            spreadsheet.AddCell(new SimpleCell("Production time: "), 0, rowOffset);
+            spreadsheet.AddCell(new SimpleCell(bp.ManufacturingTime().FormatSeconds()), 1, rowOffset);
+            var mt = spreadsheet.AddCell(new SimpleCell(bp.ManufacturingTime().ToString()), 2, rowOffset);
+
             return spreadsheet.Export();
         }
 
@@ -94,6 +109,7 @@ namespace YetAnotherProfitCalc
     public class ManufacturingSpreadsheetTests
     {
         [TestCase("Medium Trimark Armor Pump I")]
+        [TestCase("Warrior II")]
         public void MedTrimark(string typeName)
         {
             var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
