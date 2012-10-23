@@ -10,9 +10,9 @@ namespace YetAnotherProfitCalc
     class ManufacturingSpreadsheet
     {
 
-        public static string Create(IBlueprint bp)
+        public static string Create<TSpreadsheet>(IBlueprint bp) where TSpreadsheet : Spreadsheet, new()
         {
-            var spreadsheet = new TSVSpreadsheet();
+            var spreadsheet = new TSpreadsheet();
 
             spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(bp.Product)), 0, 0);
             var quantity = new SimpleCell("100");
@@ -114,7 +114,7 @@ namespace YetAnotherProfitCalc
         {
             var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
             Console.WriteLine("------");
-            Console.WriteLine(ManufacturingSpreadsheet.Create(bp));
+            Console.WriteLine(ManufacturingSpreadsheet.Create<TSVSpreadsheet>(bp));
             Console.WriteLine("------");
         }
     }
