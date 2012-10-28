@@ -88,7 +88,7 @@ namespace YetAnotherProfitCalc
             // 4 empty
             var ttAmount = spreadsheet.AddCell(new FormulaCell("={0}*{1}", prodSell, transactionTax), 5, rowNum);
             var prodBuySell = spreadsheet.AddCell(new SimpleCell("Sell"), 6, rowNum);
-            var prodValue = spreadsheet.AddCell(new FormulaCell("=if({0}=\"Sell\",{1},if({0}=\"Buy\",{2}-{3},{0}-{3}))", prodBuySell, prodSell, prodBuy, ttAmount), 7, rowNum);
+            var prodValue = spreadsheet.AddCell(new FormulaCell("=if({0}=\"Sell\",{1}-{3},if({0}=\"Buy\",{2},{0}-{3}))", prodBuySell, prodSell, prodBuy, ttAmount), 7, rowNum);
             var totalValue = spreadsheet.AddCell(new FormulaCell("={0}*{1}", prodValue, quantity), 9, rowNum);
 
             rowNum += 2;

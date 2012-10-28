@@ -57,6 +57,7 @@
     <Compile Include="CommonQueries.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="FetchEveCentralPrice.cs" />
+    <Compile Include="InventionSpreadsheet.cs" />
     <Compile Include="ItemClasses.cs" />
     <Compile Include="ManufacturingSpreadsheet.cs" />
     <Compile Include="Prices.cs" />

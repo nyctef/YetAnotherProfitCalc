@@ -12,6 +12,8 @@ namespace YetAnotherProfitCalc
         string Export();
         string GetCellLocation(Cell cell);
         Cell AddCell(Cell cell, int xpos, int ypos);
+        int Height { get; }
+        int Width { get; }
     }
 
     public abstract class Cell
@@ -25,6 +27,9 @@ namespace YetAnotherProfitCalc
         private static char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
         private int xmax = 0;
         private int ymax = 0;
+
+        public int Height { get { return ymax; } }
+        public int Width { get { return xmax; } }
 
         public Cell AddCell(Cell cell, int xpos, int ypos) 
         {

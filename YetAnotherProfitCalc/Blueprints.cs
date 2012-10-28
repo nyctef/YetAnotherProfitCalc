@@ -222,7 +222,7 @@ namespace YetAnotherProfitCalc
 
 			var t1ID = CommonQueries.GetT1VersionOfT2(Product);
 			var t1BPID = CommonQueries.GetBlueprintFromProduct(t1ID);
-			Console.WriteLine(new T1Blueprint(t1BPID, 0, 0).InventionMaterials);
+			//Console.WriteLine(new T1Blueprint(t1BPID, 0, 0).InventionMaterials);
 
 			Materials = new List<BPMaterial>();
 
