@@ -111,6 +111,63 @@ namespace YetAnotherProfitCalc
         }
     }
 
+	public class Decryptor
+	{
+		public static Decryptor Get(string name)
+		{
+			switch (name)
+			{
+				case "War Strategon":
+				case "Installation Guide":
+				case "Stolen Formulas":
+				case "Assembly Instructions":
+					return DC18;
+				case "Classic Doctrine":
+				case "Prototype Diagram":
+				case "Test Reports":
+				case "Advanced Theories":
+					return DC12;
+				case "Formation Layout":
+				case "Tuning Instructions":
+				case "Collision Measurements":
+				case "Calibration Data":
+					return DC11;
+				case "Sacred Manifesto": 
+				case "User Manual": 
+				case "Engagement Plan": 
+				case "Operation Handbook":
+					return DC10;
+				case "Circular Logic": 
+				case "Alignment Chart": 
+				case "Symbiotic Figures": 
+				case "Circuitry Schematics":
+					return DC06;
+			}
+			return null;
+		}
+
+		// TODO check
+		public static readonly Decryptor DCNA = new Decryptor(1.0m, 0, -4, -4);
+		public static readonly Decryptor DC06 = new Decryptor(0.6m, 9, -6, -2);
+		public static readonly Decryptor DC10 = new Decryptor(1.0m, 1, -3, 0);
+		public static readonly Decryptor DC11 = new Decryptor(1.1m, 0, -1, -1);
+		public static readonly Decryptor DC12 = new Decryptor(1.2m, 1, -2, -1);
+		public static readonly Decryptor DC18 = new Decryptor(1.8m, 3, -5, -2);
+
+		public decimal InventionMod { get; private set; }
+		public int RunsMod { get; private set; }
+		public int MlResult { get; private set; }
+		public int PlResult { get; private set; }
+		
+		public Decryptor(decimal inventionMod, int runsMod, int mlResult, int plResult)
+		{
+			InventionMod = inventionMod;
+			RunsMod = runsMod;
+			MlResult = mlResult;
+			PlResult = plResult;
+		}
+	}
+
 
 
     /*
