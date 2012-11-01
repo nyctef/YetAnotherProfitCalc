@@ -119,7 +119,7 @@ namespace YetAnotherProfitCalc
 
     class InventionBlueprintTests
     {
-        [TestCase("Warrior II")]
+        [TestCase("Stiletto")]
         public void TestInventionSpreadsheet(string typeName)
         {
             var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);

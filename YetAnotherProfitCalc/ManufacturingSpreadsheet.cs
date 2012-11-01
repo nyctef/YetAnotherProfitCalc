@@ -45,7 +45,7 @@ namespace YetAnotherProfitCalc
                 // 5 empty
                 var buysell = spreadsheet.AddCell(new SimpleCell("Sell"), 6, rowNum);
 
-                var unitCost = spreadsheet.AddCell(new FormulaCell("=if({0}=\"Sell\",{1},if({0}=\"Buy\",{2}+{3},{0}+{3}))", buysell, sell, buy, brokerFee), 7, rowNum);
+                var unitCost = spreadsheet.AddCell(new FormulaCell("=if({0}=\"Sell\",{1},if({0}=\"Buy\",{2}+{3},{0}+{3}))", buysell, sell, buy, bfAmount), 7, rowNum);
                 bottomUnitCost = unitCost; topUnitCost = topUnitCost ?? unitCost;
 
                 var costPerRun = spreadsheet.AddCell(new FormulaCell("={0}*{1}", unitCost, matQty), 8, rowNum);
