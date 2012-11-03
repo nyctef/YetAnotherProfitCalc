@@ -38,7 +38,7 @@ namespace YetAnotherProfitCalc
             foreach (var mat in bp.Materials)
             {
                 spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(mat.matID)), 0, rowNum);
-                var matQty = spreadsheet.AddCell(new SimpleCell(mat.quantity.ToString()), 1, rowNum);
+                var matQty = spreadsheet.AddCell(new SimpleCell("=" + mat.quantity.ToString() + "*" + mat.damagePerJob.ToString()), 1, rowNum);
                 var buy = spreadsheet.AddCell(new EveCentralCell(mat.matID, type:PriceType.buy, measure:PriceMeasure.max), 2, rowNum);
                 var sell = spreadsheet.AddCell(new EveCentralCell(mat.matID, type: PriceType.sell, measure: PriceMeasure.min), 3, rowNum);
                 var bfAmount = spreadsheet.AddCell(new FormulaCell("={0}*{1}", brokerFee, buy), 4, rowNum);
