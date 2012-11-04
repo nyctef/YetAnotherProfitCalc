@@ -116,15 +116,10 @@ WHERE r.typeID = {0}
             return new MaterialID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
         }
 
-        /// <summary>
-        /// Note: this assumes there exists only one t2 version, which is untrue for some items 
-        /// eg fast frigates (combat/fleet inties) and prototype cloaks (improved/covops)
-        /// </summary>
-		public static MaterialID GetT2VersionOfT1(MaterialID matID)
+       	public static MaterialID GetT2VersionOfT1(MaterialID matID, string outputName = null)
 		{
             var result = GetMetaGroupVersionOfT1(matID, 2); // note metaGroup not metaLevel
-            if (result.Any()) return result.First();
-            return new MaterialID(0);
+            return result.FirstOrDefault(r => outputName != null ? CommonQueries.GetTypeName(r) == outputName : true);
 		}
 
 		public static IEnumerable<MaterialID> GetMetaGroupVersionOfT1(MaterialID matID, int metaGroupID)

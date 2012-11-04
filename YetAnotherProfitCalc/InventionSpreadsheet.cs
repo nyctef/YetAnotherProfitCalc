@@ -9,7 +9,7 @@ namespace YetAnotherProfitCalc
 {
     class InventionSpreadsheet
     {
-        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null, Decryptor decryptor = null) where TSpreadsheet : class, Spreadsheet, new()
+        public static TSpreadsheet Create<TSpreadsheet>(T2Blueprint bp, int rowNum = 0, TSpreadsheet existing = null, Decryptor decryptor = null) where TSpreadsheet : class, Spreadsheet, new()
         {
             var spreadsheet = existing ?? new TSpreadsheet();
 
@@ -96,8 +96,8 @@ namespace YetAnotherProfitCalc
             rowNum++;
 
             int outputruns;
-            var invResult = decryptor != null ? t1BP.GetInventionResult(out outputruns, MLmod:decryptor.MlResult, PLmod:decryptor.PlResult, runsMod:decryptor.RunsMod)
-                                              : t1BP.GetInventionResult(out outputruns);
+            var invResult = decryptor != null ? t1BP.GetInventionResult(out outputruns, MLmod:decryptor.MlResult, PLmod:decryptor.PlResult, runsMod:decryptor.RunsMod, outputName:CommonQueries.GetTypeName(bp.Product))
+                                              : t1BP.GetInventionResult(out outputruns, outputName: CommonQueries.GetTypeName(bp.Product));
 
             spreadsheet.AddCell(new SimpleCell("Cost per unit"), 0, rowNum);
             var costPerUnit = spreadsheet.AddCell(new FormulaCell("={0}/"+outputruns, costPerBP), 1, rowNum);
@@ -122,10 +122,10 @@ namespace YetAnotherProfitCalc
     class InventionBlueprintTests
     {
         [TestCase("Stiletto", null)]
-        [TestCase("Stiletto", "Formation Layout")]
+        [TestCase("Sabre", "Formation Layout")]
         public void TestInventionSpreadsheet(string typeName, string decryptorName)
         {
-            var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
+            var bp = new T2Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
             Console.WriteLine("------");
             Console.WriteLine(InventionSpreadsheet.Create<TSVSpreadsheet>(bp, decryptor:Decryptor.Get(decryptorName)).Export());
             Console.WriteLine("------");

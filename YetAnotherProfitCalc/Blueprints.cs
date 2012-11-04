@@ -190,10 +190,10 @@ namespace YetAnotherProfitCalc
             return Details.researchTechTime * inventionSlotModifier * implantModifier;
         }
 
-        public T2Blueprint GetInventionResult(out int outputRuns, int inputRuns = -1, int MLmod = -4, int PLmod = -4, int runsMod = 0)
+        public T2Blueprint GetInventionResult(out int outputRuns, int inputRuns = -1, int MLmod = -4, int PLmod = -4, int runsMod = 0, string outputName = null)
         {
             if (inputRuns == -1) inputRuns = Details.maxProductionLimit;
-            var t2bpID = CommonQueries.GetBlueprintFromProduct(CommonQueries.GetT2VersionOfT1(Product));
+            var t2bpID = CommonQueries.GetBlueprintFromProduct(CommonQueries.GetT2VersionOfT1(Product, outputName));
             var t2bp = new T2Blueprint(t2bpID, MLmod, PLmod);
             outputRuns = (int)((inputRuns / (decimal)Details.maxProductionLimit) * (t2bp.Details.maxProductionLimit / 10.0m)) + runsMod;
             outputRuns = Math.Min(Math.Max(outputRuns, 1), t2bp.Details.maxProductionLimit);
