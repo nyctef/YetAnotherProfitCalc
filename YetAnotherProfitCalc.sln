@@ -10,12 +10,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BEE5B2
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YetAnotherProfitCalc.WPF.UI", "YetAnotherProfitCalc.WPF.UI\YetAnotherProfitCalc.WPF.UI.csproj", "{E9495C44-2751-4C34-8E86-6BC9B5E0B020}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9495C44-2751-4C34-8E86-6BC9B5E0B020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9495C44-2751-4C34-8E86-6BC9B5E0B020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9495C44-2751-4C34-8E86-6BC9B5E0B020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9495C44-2751-4C34-8E86-6BC9B5E0B020}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAD06C5C-7759-4511-B818-0A5B557B94F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAD06C5C-7759-4511-B818-0A5B557B94F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAD06C5C-7759-4511-B818-0A5B557B94F8}.Release|Any CPU.ActiveCfg = Release|Any CPU

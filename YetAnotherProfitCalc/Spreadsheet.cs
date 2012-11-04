@@ -127,7 +127,12 @@ namespace YetAnotherProfitCalc
 
         public override string CellText(Spreadsheet spreadsheet)
         {
-            return text;
+			if (spreadsheet is TSVSpreadsheet)
+			{
+				return text;
+			}
+
+	        throw new NotImplementedException();
         }
     }
 
