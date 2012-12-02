@@ -24,5 +24,19 @@ namespace YetAnotherProfitCalc.WPF.UI
 		{
 			InitializeComponent();
 		}
+
+
+
+        
+        /// <summary>
+        /// Gets the text box in charge of the editable portion of the combo box.
+        /// </summary>
+        protected TextBox EditableTextBox
+        {
+            get
+            {
+                return this.GetTemplateChild("PART_EditableTextBox") as TextBox;
+            }
+        }
 	}
 }

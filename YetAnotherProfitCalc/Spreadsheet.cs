@@ -70,6 +70,8 @@ namespace YetAnotherProfitCalc
 
         public string GetCellLocation(Tuple<int, int> pos)
         {
+            // this uses absolute cell references because google docs tries to 
+            // be clever and "fix" the references when we paste in the spreadsheet
             return "$" + alpha[pos.Item1] + "$" + (pos.Item2 + 1);
         }
     }

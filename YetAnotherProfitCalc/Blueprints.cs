@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using System.Data.SQLite;
+=======
+>>>>>>> 525a2ba2ec4cc2beae08a2fba3fc2e0a3c50f35e
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -355,6 +358,23 @@ namespace YetAnotherProfitCalc
 			Console.WriteLine(t2CloakBP.Materials.GetPrice(new BasicEveCentralJitaPriceProvider()));
 		}
 
+<<<<<<< HEAD
+=======
+        [Test]
+        public void TestMedTrimark()
+        {
+            var trimarkID = CommonQueries.GetBlueprintID("Medium Trimark Armor Pump I");
+            var trimarkBP = new T1Blueprint(trimarkID, 2, 5);
+            var expected = new[] {
+                    new BPMaterial("Armor Plates", 13),
+                    new BPMaterial("Fried Interface Circuit", 16),
+                    new BPMaterial("Contaminated Nanite Compound", 10),
+                };
+            CollectionAssert.AreEquivalent(expected, trimarkBP.Materials);
+            Console.WriteLine(trimarkBP.Materials.GetPrice(new BasicEveCentralJitaPriceProvider()));
+        }
+
+>>>>>>> 525a2ba2ec4cc2beae08a2fba3fc2e0a3c50f35e
         [TestCase("Archon")][TestCase("Aeon")]
         [TestCase("Chimera")][TestCase("Wyvern")]
         [TestCase("Thanatos")][TestCase("Nyx")]

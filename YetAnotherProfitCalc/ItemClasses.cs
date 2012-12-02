@@ -121,27 +121,27 @@ namespace YetAnotherProfitCalc
 				case "Installation Guide":
 				case "Stolen Formulas":
 				case "Assembly Instructions":
-					return DC18;
+					return DC18.WithName(name);
 				case "Classic Doctrine":
 				case "Prototype Diagram":
 				case "Test Reports":
 				case "Advanced Theories":
-					return DC12;
+                    return DC12.WithName(name);
 				case "Formation Layout":
 				case "Tuning Instructions":
 				case "Collision Measurements":
 				case "Calibration Data":
-					return DC11;
+                    return DC11.WithName(name);
 				case "Sacred Manifesto": 
 				case "User Manual": 
 				case "Engagement Plan": 
 				case "Operation Handbook":
-					return DC10;
+                    return DC10.WithName(name);
 				case "Circular Logic": 
 				case "Alignment Chart": 
 				case "Symbiotic Figures": 
 				case "Circuitry Schematics":
-					return DC06;
+                    return DC06.WithName(name);
 			}
 			return null;
 		}
@@ -158,6 +158,7 @@ namespace YetAnotherProfitCalc
 		public int RunsMod { get; private set; }
 		public int MlResult { get; private set; }
 		public int PlResult { get; private set; }
+        public string Name { get; private set; }
 		
 		public Decryptor(decimal inventionMod, int runsMod, int mlResult, int plResult)
 		{
@@ -166,6 +167,16 @@ namespace YetAnotherProfitCalc
 			MlResult = mlResult;
 			PlResult = plResult;
 		}
+
+        public Decryptor WithName(string name)
+        {
+            Name = name;
+            return this;
+        }
+
+        public MaterialID MaterialID {
+            get { return CommonQueries.GetMaterialID(Name); }
+        }
 	}
 
 

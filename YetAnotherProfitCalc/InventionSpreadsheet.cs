@@ -9,7 +9,7 @@ namespace YetAnotherProfitCalc
 {
     class InventionSpreadsheet
     {
-        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null) where TSpreadsheet : class, Spreadsheet, new()
+        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null, Decryptor decryptor = null) where TSpreadsheet : class, Spreadsheet, new()
         {
             var spreadsheet = existing ?? new TSpreadsheet();
 
@@ -37,10 +37,11 @@ namespace YetAnotherProfitCalc
             Cell topUnitCost = null, bottomUnitCost = null;
             Cell topCostPerRun = null, bottomCostPerRun = null;
             Cell topTotalCost = null, bottomTotalCost = null;
-            foreach (var mat in t1BP.InventionMaterials)
+            var mats = t1BP.InventionMaterials.Union(decryptor != null ? new[] { new BPMaterial(decryptor.MaterialID, 1) } : Enumerable.Empty<BPMaterial>());
+            foreach (var mat in mats)
             {
                 spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(mat.matID)), 0, rowNum);
-                var matQty = spreadsheet.AddCell(new SimpleCell(mat.quantity.ToString()), 1, rowNum);
+                var matQty = spreadsheet.AddCell(new SimpleCell("=" + mat.quantity.ToString() + "*" + mat.damagePerJob.ToString()), 1, rowNum);
                 var buy = spreadsheet.AddCell(new EveCentralCell(mat.matID, type: PriceType.buy, measure: PriceMeasure.max), 2, rowNum);
                 var sell = spreadsheet.AddCell(new EveCentralCell(mat.matID, type: PriceType.sell, measure: PriceMeasure.min), 3, rowNum);
                 var bfAmount = spreadsheet.AddCell(new FormulaCell("={0}*0.01", /*brokerFee, */ buy), 4, rowNum);
@@ -64,7 +65,7 @@ namespace YetAnotherProfitCalc
             spreadsheet.AddCell(new EveCentralCell(t1BP.InventionInterface, type: PriceType.buy, measure: PriceMeasure.max), 2, rowNum);
             spreadsheet.AddCell(new EveCentralCell(t1BP.InventionInterface, type: PriceType.sell, measure: PriceMeasure.min), 3, rowNum);
 
-            // todo: decryptor, meta items
+                       // todo:  meta items
             
             rowNum++;
 
@@ -84,18 +85,19 @@ namespace YetAnotherProfitCalc
             var intSkill = spreadsheet.AddCell(new SimpleCell("4"), 1, rowNum);
             rowNum++;
             spreadsheet.AddCell(new SimpleCell("Decryptor modifier"), 0, rowNum);
-            var decMod = spreadsheet.AddCell(new SimpleCell("1"), 1, rowNum);
+            var decMod = spreadsheet.AddCell(new SimpleCell(decryptor != null ? decryptor.InventionMod.ToString() : "1"), 1, rowNum);
             rowNum++;
             spreadsheet.AddCell(new SimpleCell("Invention chance"), 0, rowNum);
             var invChance = spreadsheet.AddCell(new FormulaCell("="+t1BP.BaseInventionChance()+"*(1+0.01*{0})*(1+({1}+{2})*(0.1/5-0))*{3}", intSkill, d1Skill, d2Skill, decMod), 1, rowNum);
             rowNum++;
-
+            
             spreadsheet.AddCell(new SimpleCell("Cost per BP"), 0, rowNum);
             var costPerBP = spreadsheet.AddCell(new FormulaCell("={0}/{1}", totalTotalCost, invChance), 1, rowNum);
             rowNum++;
 
             int outputruns;
-            var invResult = t1BP.GetInventionResult(out outputruns);
+            var invResult = decryptor != null ? t1BP.GetInventionResult(out outputruns, MLmod:decryptor.MlResult, PLmod:decryptor.PlResult, runsMod:decryptor.RunsMod)
+                                              : t1BP.GetInventionResult(out outputruns);
 
             spreadsheet.AddCell(new SimpleCell("Cost per unit"), 0, rowNum);
             var costPerUnit = spreadsheet.AddCell(new FormulaCell("={0}/"+outputruns, costPerBP), 1, rowNum);
@@ -119,12 +121,13 @@ namespace YetAnotherProfitCalc
 
     class InventionBlueprintTests
     {
-        [TestCase("Warrior II")]
-        public void TestInventionSpreadsheet(string typeName)
+        [TestCase("Stiletto", null)]
+        [TestCase("Stiletto", "Formation Layout")]
+        public void TestInventionSpreadsheet(string typeName, string decryptorName)
         {
             var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
             Console.WriteLine("------");
-            Console.WriteLine(InventionSpreadsheet.Create<TSVSpreadsheet>(bp).Export());
+            Console.WriteLine(InventionSpreadsheet.Create<TSVSpreadsheet>(bp, decryptor:Decryptor.Get(decryptorName)).Export());
             Console.WriteLine("------");
         }
     }
