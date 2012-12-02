@@ -77,20 +77,6 @@ WHERE r.typeID = {0}
 
         }
 
-        public static IEnumerable<Tuple<string, TypeID>> PossibleCompletions(string input)
-        {
-            using (var cnn = new SQLiteConnection(CommonQueries.DefaultDatabase.dbConnection))
-            {
-                cnn.Open();
-                var query = @"select typeID, typeName from invMetaTypes where typeName like "" " + input + @"%"" ";
-                var results = CommonQueries.DefaultDatabase.RunSQLTableQuery(query, cnn);
-                while (results.Read())
-                {
-                    yield return Tuple.Create(results["typeName"].ToString(), new TypeID(results["typeID"].ToInt()));
-                }
-            }
-        }
-
         public static IEnumerable<BPMaterial> GetMaterialsReprocessing(MaterialID material)
         {
             return GetMaterialsRaw(material); // seems like
@@ -156,7 +142,7 @@ WHERE r.typeID = {0}
             }
 		}
 
-		public static IEnumerable<TypeID> GetTypesWithNamesLike(string searchString)
+        public static IEnumerable<Tuple<string, TypeID>> GetTypesWithNamesLike(string searchString)
 		{
 			using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
 			{
@@ -165,7 +151,7 @@ WHERE r.typeID = {0}
 				var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
 				while (results.Read())
 				{
-					yield return new TypeID(results["typeID"].ToInt());
+                    yield return Tuple.Create(results["typeName"].ToString(), new TypeID(results["typeID"].ToInt()));
 				}
 			}
 		}
