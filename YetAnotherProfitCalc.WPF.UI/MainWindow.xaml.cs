@@ -24,12 +24,23 @@ namespace YetAnotherProfitCalc.WPF.UI
         public static void Listen(Action<string> logAction)
         {
             PresentationTraceSources.DataBindingSource.Listeners
-                .Add(new BindingErrorListener() { logAction = logAction });
+                .Add(new BindingErrorListener() { logAction = logAction, Filter = new BindingErrorFilter() });
         }
         public override void Write(string message) { }
         public override void WriteLine(string message)
         {
             logAction(message);
+        }
+    }
+
+    public class BindingErrorFilter : TraceFilter
+    {
+        override public bool ShouldTrace(TraceEventCache cache, string source,
+        TraceEventType eventType, int id, string formatOrMessage,
+        object[] args, object data, object[] dataArray)
+        {
+            return (eventType & TraceEventType.Error) != 0 ||
+                (eventType & TraceEventType.Critical) != 0;
         }
     }
 
@@ -47,7 +58,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 	{
 		public MainWindow()
 		{
-            //BindingErrorListener.Listen(m => { Console.WriteLine(m); });
+            BindingErrorListener.Listen(m => { throw new BindingException(m); });
 			InitializeComponent();
 		}
 	}
