@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace YetAnotherProfitCalc.WPF.UI
 {
-	/// <summary>
+    /// <summary>
 	/// Interaction logic for EveItemDropDown.xaml
 	/// </summary>
 	partial class EveItemDropDown : UserControl

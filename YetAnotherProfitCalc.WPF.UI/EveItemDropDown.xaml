@@ -9,6 +9,7 @@
               ItemsSource="{Binding Path=Items,Mode=TwoWay}"
               Text="{Binding Path=Input,Mode=TwoWay}"
               DisplayMemberPath="ItemName"
+              IsDropDownOpen="{Binding Path=DropdownShouldBeOpen,Mode=OneWay}"
               Name="ComboBox">
     </ComboBox>
 </UserControl>

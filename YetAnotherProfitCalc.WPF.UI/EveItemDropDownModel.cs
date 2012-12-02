@@ -20,7 +20,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 		}
 	}
 
-	class EveItemDropDownModel
+	class EveItemDropDownModel : NotifyPropertyChangedBase
 	{
 		/// <summary>
 		/// delay in ms between changes in the dropdown and updating the potential completion list
@@ -31,8 +31,11 @@ namespace YetAnotherProfitCalc.WPF.UI
 		/// Number of characters that must be entered in the dropdown before it starts searching for items
 		/// </summary>
 		private readonly int m_MinCharacters;
+        private bool m_DropdownShouldBeOpen;
 
-        public ObservableCollection<EveItem> Items { get; set; }
+        public ObservableCollection<EveItem> Items { get; private set; }
+
+        public bool DropdownShouldBeOpen { get { return m_DropdownShouldBeOpen; } }
 		
 		private string m_Input;
 		public string Input
@@ -40,8 +43,16 @@ namespace YetAnotherProfitCalc.WPF.UI
 			get { return m_Input; }
 			set 
             { 
-                m_Input = value; 
-                if (value.Length >= m_MinCharacters) UpdateItems(CommonQueries.GetTypesWithNamesLike(value +"%").Select(res => new EveItem(res.Item1, res.Item2))); 
+                m_Input = value;
+                if (value.Length >= m_MinCharacters)
+                {
+                    UpdateItems(CommonQueries.GetTypesWithNamesLike(value + "%").Select(res => new EveItem(res.Item1, res.Item2)));
+                    UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, true);
+                }
+                else
+                {
+                    UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, false);
+                }
             }
 		}
 
