@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace YetAnotherProfitCalc
 {
-	class BPMaterial : IEquatable<BPMaterial>
+	public class BPMaterial : IEquatable<BPMaterial>
 	{
 		public readonly MaterialID matID;
 		public readonly long quantity;
@@ -479,7 +479,7 @@ namespace YetAnotherProfitCalc
 		public void CapComponentsProfit()
 		{
 			var priceProvider = new BasicPriceCache(new BasicEveCentralJitaPriceProvider());
-			var bpTypes = CommonQueries.GetTypesWithNamesLike("Capital % Blueprint").Select(tID => new BlueprintID(tID.ToInt()));
+			var bpTypes = CommonQueries.GetTypesWithNamesLike("Capital % Blueprint").Select(tID => new BlueprintID(tID.Item2.ToInt()));
 			foreach (var bpType in bpTypes)
 			{
 				var bp = new T1Blueprint(bpType, 5, 5);

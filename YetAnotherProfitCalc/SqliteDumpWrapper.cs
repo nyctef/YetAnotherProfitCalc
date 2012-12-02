@@ -12,7 +12,7 @@ namespace YetAnotherProfitCalc
     /// 
     /// TODO: need to figure out how to handle connections - maybe just one static one
     /// </summary>
-    class SQLiteDumpWrapper
+    public class SQLiteDumpWrapper
     {
         public string dbConnection;
 

@@ -18,25 +18,19 @@ namespace YetAnotherProfitCalc.WPF.UI
 	/// <summary>
 	/// Interaction logic for EveItemDropDown.xaml
 	/// </summary>
-	public partial class EveItemDropDown : UserControl
+	partial class EveItemDropDown : UserControl
 	{
+        private EveItemDropDownModel m_ViewModel;
 		public EveItemDropDown()
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
+            m_ViewModel = new EveItemDropDownModel();
+            ComboBox.DataContext = ViewModel;
 		}
 
-
-
-        
-        /// <summary>
-        /// Gets the text box in charge of the editable portion of the combo box.
-        /// </summary>
-        protected TextBox EditableTextBox
+        EveItemDropDownModel ViewModel
         {
-            get
-            {
-                return this.GetTemplateChild("PART_EditableTextBox") as TextBox;
-            }
+            get { return m_ViewModel; }
         }
-	}
+    }
 }

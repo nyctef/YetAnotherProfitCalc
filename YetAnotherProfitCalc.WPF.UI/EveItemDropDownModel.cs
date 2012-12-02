@@ -10,10 +10,10 @@ namespace YetAnotherProfitCalc.WPF.UI
 {
 	struct EveItem
 	{
-		public readonly string ItemName;
-		public readonly TypeID TypeID;
+		public string ItemName { get; private set; }
+        public TypeID TypeID { get; private set; }
 
-		public EveItem(string itemName, TypeID typeId)
+		public EveItem(string itemName, TypeID typeId) : this()
 		{
 			ItemName = itemName;
 			TypeID = typeId;
@@ -32,13 +32,17 @@ namespace YetAnotherProfitCalc.WPF.UI
 		/// </summary>
 		private readonly int m_MinCharacters;
 
-		public readonly ObservableCollection<EveItem> Items;
+        public ObservableCollection<EveItem> Items { get; set; }
 		
 		private string m_Input;
 		public string Input
 		{
 			get { return m_Input; }
-			set { m_Input = value; }
+			set 
+            { 
+                m_Input = value; 
+                if (value.Length >= m_MinCharacters) UpdateItems(CommonQueries.GetTypesWithNamesLike(value +"%").Select(res => new EveItem(res.Item1, res.Item2))); 
+            }
 		}
 
 		public EveItemDropDownModel(int delayms = 0, int minCharacters = 3)
@@ -67,7 +71,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 
 		private DateTime m_TimeToNextCheck;
 
-		private bool m_IsEnabled;
+		//private bool m_IsEnabled;
 
 		private Task m_CurrentTask;
 
@@ -78,7 +82,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 			lock (m_Sync)
 			{
 				m_TimeToNextCheck = time;
-				m_IsEnabled = true;
+				//m_IsEnabled = true;
 
 				if (m_CurrentTask != null)
 				{
@@ -107,7 +111,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 		{
 			lock (m_Sync)
 			{
-				m_IsEnabled = false;	
+				//m_IsEnabled = false;	
 				cts.Cancel();
 			}
 		}

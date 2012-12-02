@@ -29,7 +29,7 @@ namespace YetAnotherProfitCalc
         }
     }
     
-    static class CommonQueries
+    public static class CommonQueries
     {
         public static SQLiteDumpWrapper DefaultDatabase = new SQLiteDumpWrapper();
 
@@ -147,7 +147,7 @@ WHERE r.typeID = {0}
 			using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
 			{
 				cnn.Open();
-				var query = @"select typeID from invTypes where typeName like """ + searchString + @""";";
+				var query = @"select typeID, typeName from invTypes where typeName like """ + searchString + @""";";
 				var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
 				while (results.Read())
 				{
