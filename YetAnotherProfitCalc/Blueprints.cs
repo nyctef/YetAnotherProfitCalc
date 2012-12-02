@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -458,5 +459,30 @@ namespace YetAnotherProfitCalc
 
             Console.WriteLine("total: "+ total.FormatISK());
         }
+
+		[Test]
+		public void CapComponentsProfit()
+		{
+			var priceProvider = new BasicPriceCache(new BasicEveCentralJitaPriceProvider());
+			var bpTypes = CommonQueries.GetTypesWithNamesLike("Capital % Blueprint").Select(tID => new BlueprintID(tID.ToInt()));
+			foreach (var bpType in bpTypes)
+			{
+				var bp = new T1Blueprint(bpType, 5, 5);
+				Console.WriteLine(CommonQueries.GetTypeName(bp.Product)+" Mats: ");
+				var totalPrice = 0m;
+				foreach (var mat in bp.Materials)
+				{
+					var price = priceProvider.GetPrice(mat.matID).ToDecimal()*mat.quantity*mat.damagePerJob;
+					totalPrice += price;
+					Console.WriteLine(CommonQueries.GetTypeName(mat.matID) + ": "+ price.FormatISK());
+				}
+				Console.WriteLine();
+				Console.WriteLine("Total price: "+ totalPrice.FormatISK());
+				var productPrice = priceProvider.GetPrice(bp.Product);
+				Console.WriteLine("Product price: "+ productPrice);
+				var profit = productPrice.ToDecimal() - totalPrice;
+				Console.WriteLine("Profit: "+profit.FormatISK());
+			}
+		}	
 	}
 }

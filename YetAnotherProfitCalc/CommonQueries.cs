@@ -142,6 +142,20 @@ WHERE r.typeID = {0}
             }
 		}
 
+		public static IEnumerable<TypeID> GetTypesWithNamesLike(string searchString)
+		{
+			using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
+			{
+				cnn.Open();
+				var query = @"select typeID from invTypes where typeName like """ + searchString + @""";";
+				var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
+				while (results.Read())
+				{
+					yield return new TypeID(results["typeID"].ToInt());
+				}
+			}
+		}
+
         public static string GetTypeName(TypeID matID)
         {
             var query = @"select typeName from invTypes where typeID = " + matID + ";";
