@@ -354,6 +354,20 @@ namespace YetAnotherProfitCalc
 			Console.WriteLine(t2CloakBP.Materials.GetPrice(new BasicEveCentralJitaPriceProvider()));
 		}
 
+        [Test]
+        public void TestMedTrimark()
+        {
+            var trimarkID = CommonQueries.GetBlueprintID("Medium Trimark Armor Pump I");
+            var trimarkBP = new T1Blueprint(trimarkID, 2, 5);
+            var expected = new[] {
+                    new BPMaterial("Armor Plates", 13),
+                    new BPMaterial("Fried Interface Circuit", 16),
+                    new BPMaterial("Contaminated Nanite Compound", 10),
+                };
+            CollectionAssert.AreEquivalent(expected, trimarkBP.Materials);
+            Console.WriteLine(trimarkBP.Materials.GetPrice(new BasicEveCentralJitaPriceProvider()));
+        }
+
         [TestCase("Archon")][TestCase("Aeon")]
         [TestCase("Chimera")][TestCase("Wyvern")]
         [TestCase("Thanatos")][TestCase("Nyx")]

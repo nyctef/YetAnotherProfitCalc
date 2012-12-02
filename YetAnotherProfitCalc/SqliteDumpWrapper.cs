@@ -9,6 +9,8 @@ namespace YetAnotherProfitCalc
 {
     /// <summary>
     /// based on http://www.dreamincode.net/forums/topic/157830-using-sqlite-with-c%23/
+    /// 
+    /// TODO: need to figure out how to handle connections - maybe just one static one
     /// </summary>
     class SQLiteDumpWrapper
     {

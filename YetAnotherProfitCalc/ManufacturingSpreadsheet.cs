@@ -10,12 +10,12 @@ namespace YetAnotherProfitCalc
     class ManufacturingSpreadsheet
     {
 
-        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null, Cell blueprintCost = null) where TSpreadsheet : class, Spreadsheet, new()
+        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null, Cell blueprintCost = null, int numToMake = 1) where TSpreadsheet : class, Spreadsheet, new()
         {
             var spreadsheet = existing ?? new TSpreadsheet();
 
             spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(bp.Product)), 0, rowNum);
-            var quantity = new SimpleCell("100");
+            var quantity = new SimpleCell(numToMake.ToString());
             var brokerFee = new SimpleCell("0.0045");
             var transactionTax = new SimpleCell("0.0105");
             rowNum++;
@@ -121,11 +121,10 @@ namespace YetAnotherProfitCalc
 
     public class ManufacturingSpreadsheetTests
     {
-        [TestCase("Medium Trimark Armor Pump I")]
-        [TestCase("Warrior II")]
+        [TestCase("Apocalypse")]
         public void MedTrimark(string typeName)
         {
-            var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
+            var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 100, 0);
             Console.WriteLine("------");
             Console.WriteLine(ManufacturingSpreadsheet.Create<TSVSpreadsheet>(bp).Export());
             Console.WriteLine("------");
