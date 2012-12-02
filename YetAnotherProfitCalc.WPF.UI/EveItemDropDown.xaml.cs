@@ -26,11 +26,32 @@ namespace YetAnotherProfitCalc.WPF.UI
             InitializeComponent();
             m_ViewModel = new EveItemDropDownModel();
             ComboBox.DataContext = ViewModel;
+            ComboBox.DropDownOpened += DeselectText;
 		}
+
+        /// <summary>
+        /// This is a hack to cope with the fact that, when we start getting completions, we open the dropdown, 
+        /// which causes the current text in the combobox to be selected for some reason
+        /// 
+        /// TODO: should probably actually figure out the root cause of this
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DeselectText(object sender, EventArgs e)
+        {
+            var textBox = TextBoxPart;
+            textBox.SelectionLength = 0;
+            textBox.SelectionStart = textBox.Text.Length;
+        }
 
         EveItemDropDownModel ViewModel
         {
             get { return m_ViewModel; }
+        }
+
+        TextBox TextBoxPart
+        {
+            get { return (TextBox)ComboBox.Template.FindName("PART_EditableTextBox", ComboBox); }
         }
     }
 }

@@ -142,12 +142,12 @@ WHERE r.typeID = {0}
             }
 		}
 
-        public static IEnumerable<Tuple<string, TypeID>> GetTypesWithNamesLike(string searchString)
+        public static IEnumerable<Tuple<string, TypeID>> GetTypesWithNamesLike(string searchString, int limit = 30)
 		{
 			using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
 			{
 				cnn.Open();
-				var query = @"select typeID, typeName from invTypes where typeName like """ + searchString + @""";";
+				var query = @"select typeID, typeName from invTypes where typeName like """ + searchString + @""" LIMIT "+limit+";";
 				var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
 				while (results.Read())
 				{

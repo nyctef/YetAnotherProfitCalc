@@ -35,8 +35,19 @@ namespace YetAnotherProfitCalc.WPF.UI
 
         public ObservableCollection<EveItem> Items { get; private set; }
 
-        public bool DropdownShouldBeOpen { get { return m_DropdownShouldBeOpen; } }
-		
+        public bool DropdownShouldBeOpen { get { return m_DropdownShouldBeOpen; } set { m_DropdownShouldBeOpen = value; } }
+
+        public static IEnumerable<EveItem> Completions(string input)
+        {
+            var completions = CommonQueries.GetTypesWithNamesLike(input + "%").ToList();
+            if (completions.Count < 100) 
+            {
+                completions.AddRange(CommonQueries.GetTypesWithNamesLike("%"+input+"%"));
+            }
+
+            return completions.Select(res => new EveItem(res.Item1, res.Item2));
+        }
+
 		private string m_Input;
 		public string Input
 		{
@@ -46,7 +57,7 @@ namespace YetAnotherProfitCalc.WPF.UI
                 m_Input = value;
                 if (value.Length >= m_MinCharacters)
                 {
-                    UpdateItems(CommonQueries.GetTypesWithNamesLike(value + "%").Select(res => new EveItem(res.Item1, res.Item2)));
+                    UpdateItems(Completions(value));
                     UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, true);
                 }
                 else
