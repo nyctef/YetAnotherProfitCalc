@@ -209,7 +209,7 @@ WHERE r.typeID = {0}
             }
         }
 
-        [TestCase(0, 10, Result=0.1)]
+        [TestCase(0, 10, Result = 0.1)]
         [TestCase(-1, 10, Result = 0.2)]
         [TestCase(-4, 10, Result = 0.5)]
         [TestCase(1, 10, Result = 0.05)]
@@ -220,6 +220,45 @@ WHERE r.typeID = {0}
             var factor = (ME >= 0) ? (1m / (ME + 1)) / 10m 
                                    : (1 - ME) / 10m;
             return factor * (wasteFactor/10.0m);
+        }
+
+        public static List<AttributeValue> GetAttributesForType(TypeID typeID)
+        {
+            var query = @"
+SELECT ta.attributeID, valueInt, valueFloat, attributeName, at.description, at.displayName, at.categoryID, u.unitName, u.displayName, u.description
+FROM dgmTypeAttributes AS ta
+INNER JOIN dgmAttributeTypes AS at ON ta.attributeID = at.attributeID
+INNER JOIN eveUnits AS u ON at.unitID = u.unitID
+WHERE ta.typeID = "+typeID.ToInt()+@"
+LIMIT 100
+";
+            using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
+            {
+                cnn.Open();
+
+                var reader = DefaultDatabase.RunSQLTableQuery(query, cnn);
+                var results = new List<AttributeValue>();
+                while (reader.Read())
+                {
+                    var unit = new Unit(new UnitID((int)reader["u.unitID"]), (string)reader["u.unitName"], 
+                        (string)reader["u.displayName"], (string)reader["u.description"]);
+                    var attribute = new Attribute(new AttributeID((int)reader["ta.attributeID"]), (string)reader["attributeName"],
+                        (string)reader["at.displayName"], (string)reader["at.description"], unit, 
+                        AttributeCategory.Get((int)reader["at.categoryID"]));
+
+                    AttributeValue value;
+                    if (reader["valueInt"] != null)
+                    {
+                        value = new AttributeValue(attribute, (int)reader["valueInt"]);
+                    }
+                    else
+                    {
+                        value = new AttributeValue(attribute, (float)reader["valueFloat"]);
+                    }
+                    results.Add(value);
+                }
+                return results;
+            }
         }
 
     }

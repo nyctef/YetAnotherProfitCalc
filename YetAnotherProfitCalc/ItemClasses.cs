@@ -162,26 +162,39 @@ namespace YetAnotherProfitCalc
         public string AttributeName { get; private set; }
         public string DisplayName { get; private set; }
         public string Description { get; private set; }
-        public UnitID UnitID { get; private set; }
+        public Unit Unit { get; private set; }
+        public AttributeCategory Category { get; private set; }
 
-        public Attribute(AttributeID id, string name, string dName, string desc, UnitID unitID)
+        public Attribute(AttributeID id, string name, string dName, string desc, Unit unit, AttributeCategory cat)
         {
             ID = id;
             AttributeName = name;
             DisplayName = dName;
             Description = desc;
-            UnitID = unitID;
+            Unit = unit;
+            Category = cat;
         }
     }
 
-    public class AttributeValue<T> // is int or float
+    public class AttributeValue
     {
         public Attribute Attribute { get; private set; }
-        public T Value { get; private set; }
-        public AttributeValue(Attribute attr, T value) 
+        public int IntValue { get; private set; }
+        public float FloatValue { get; private set; }
+        public bool IsInt { get; private set; }
+
+        public AttributeValue(Attribute attr, int value) 
         {
             Attribute = attr;
-            Value = value;
+            IntValue = value;
+            IsInt = true;
+        }
+
+        public AttributeValue(Attribute attr, float value)
+        {
+            Attribute = attr;
+            FloatValue = value;
+            IsInt = false;
         }
     }
 
