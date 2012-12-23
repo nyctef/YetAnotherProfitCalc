@@ -20,6 +20,7 @@ namespace YetAnotherProfitCalc.Tests
             return CommonQueries.GetWasteForME(ME, wasteFactor);
         }
 
+        [Test]
         public void TestGetAttributesForType()
         {
             var attributes = CommonQueries.GetAttributesForType(new TypeID(23757));
@@ -28,6 +29,15 @@ namespace YetAnotherProfitCalc.Tests
                 Console.WriteLine(attr.Attribute.DisplayName + ": " + attr.Value);
             }
             Assert.AreEqual(57, attributes.Count, "attributes count");
+        }
+
+        [Test]
+        public void TestGetTypeDescription()
+        {
+            Assert.AreEqual("", CommonQueries.GetTypeDescription(new TypeID(25)));
+            Assert.AreEqual("This cargo container is flimsily constructed and may not "
+            +"survive the rigors of space for more than an hour or so.", 
+                CommonQueries.GetTypeDescription(new TypeID(23)));
         }
     }
 

@@ -157,6 +157,12 @@ WHERE r.typeID = {0}
             return DefaultDatabase.RunSQLStringQuery(query);
         }
 
+        public static string GetTypeDescription(TypeID typeID)
+        {
+            var query = @"select description from invTypes where typeID = " + typeID + ";";
+            return DefaultDatabase.RunSQLStringQuery(query);
+        }
+
         public static string GetGroupName(GroupID groupID)
         {
             var query = @"select groupName from invGroups where groupID = " + groupID + ";";

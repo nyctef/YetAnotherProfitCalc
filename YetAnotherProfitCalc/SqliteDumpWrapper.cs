@@ -74,7 +74,7 @@ namespace YetAnotherProfitCalc
 				//Console.WriteLine(sql);
                 mycommand.CommandText = sql;
                 object value = mycommand.ExecuteScalar();
-                if (value != null)
+                if (value != null && !(value is DBNull))
                 {
                     return value.ToString();
                 }
