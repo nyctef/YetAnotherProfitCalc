@@ -15,7 +15,10 @@
               IsDropDownOpen="{Binding Path=DropdownShouldBeOpen}"
               SelectedItem="{Binding Path=SelectedItem,Mode=TwoWay}"
               Validation.ErrorTemplate="{x:Null}"
-              Name="ComboBox">
+              LostFocus="FinishOrCancelSelection"
+              Name="ComboBox"
+              KeyDown="ComboBox_KeyDown"
+              >
     </ComboBox>
     
 </UserControl>

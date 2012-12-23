@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace YetAnotherProfitCalc.WPF.UI
 {
+    [DebuggerDisplayAttribute("{ItemName}|{TypeID}")]
 	struct EveItem
 	{
 		public string ItemName { get; private set; }
@@ -39,7 +41,9 @@ namespace YetAnotherProfitCalc.WPF.UI
 
         public bool DropdownShouldBeOpen { get { return m_DropdownShouldBeOpen; } set { m_DropdownShouldBeOpen = value; } }
 
-        public EveItem SelectedItem { get { return m_SelectedItem; } 
+        public EveItem SelectedItem 
+        { 
+            get { return m_SelectedItem; } 
             set 
             { 
                 m_SelectedItem = value;
@@ -71,7 +75,7 @@ namespace YetAnotherProfitCalc.WPF.UI
             var completions = CommonQueries.GetTypesWithNamesLike(input + "%").ToList();
             if (completions.Count < 100) 
             {
-                completions.AddRange(CommonQueries.GetTypesWithNamesLike("%"+input+"%"));
+                completions.AddRange(CommonQueries.GetTypesWithNamesLike("%"+input+"%").Where(item => !completions.Contains(item)));
             }
 
             return completions.Select(res => new EveItem(res.Item1, res.Item2));
@@ -82,9 +86,10 @@ namespace YetAnotherProfitCalc.WPF.UI
 		{
 			get { return m_Input; }
 			set 
-            { 
+            {
+                if (m_Input == value) return;
                 m_Input = value;
-                var updateNeeded = value.Length >= m_MinCharacters;
+                var updateNeeded = value != null && value.Length >= m_MinCharacters;
 
                 if (updateNeeded)
                 {

@@ -28,7 +28,9 @@ namespace YetAnotherProfitCalc.WPF.UI
             m_ViewModel = new EveItemDropDownModel();
             ComboBox.DataContext = ViewModel;
             ComboBox.DropDownOpened += DeselectText;
+            ComboBox.DropDownClosed += FinishOrCancelSelection;
             m_ViewModel.PropertyChanged += ViewModelPropertyChanged;
+            ComboBox.KeyDown += ComboBox_KeyDown;
 		}
 
         /// <summary>
@@ -82,6 +84,35 @@ namespace YetAnotherProfitCalc.WPF.UI
             }
         }
 
+        /// <summary>
+        /// This is some hacky code to ensure that the selected item and text etc are 
+        /// in sync when we select something, or cancel out of the dropdown. 
+        /// </summary>
+        private void FinishOrCancelSelection(object ignored = null, EventArgs ignored2 = null)
+        {
+            m_ViewModel.DontPropagate = true;
+            // If we've just selected something, then m_ViewModel will contain that, otherwise 
+            // it will contain the previous thing we selected.
+            ComboBox.SelectedItem = m_ViewModel.SelectedItem;
+            ComboBox.Text = m_ViewModel.SelectedName;
+            m_ViewModel.DontPropagate = false;
+
+            try
+            {
+                TextBoxPart.CaretIndex = 0;
+            }
+            catch { }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void ComboBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                FinishOrCancelSelection();
+                e.Handled = true;
+            }
+        }
     }
 }
