@@ -55,15 +55,13 @@ namespace YetAnotherProfitCalc.WPF.UI
 			set 
             { 
                 m_Input = value;
-                if (value.Length >= m_MinCharacters)
+                var updateNeeded = value.Length >= m_MinCharacters;
+
+                if (updateNeeded)
                 {
                     UpdateItems(Completions(value));
-                    UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, true);
                 }
-                else
-                {
-                    UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, false);
-                }
+                UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, updateNeeded);
             }
 		}
 
