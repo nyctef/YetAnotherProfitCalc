@@ -27,7 +27,7 @@ namespace YetAnotherProfitCalc.Tests
             {
                 Console.WriteLine(attr.Attribute.DisplayName + ": " + attr.Value);
             }
-            Assert.AreEqual(9, attributes.Count, "Count should be 9");
+            Assert.AreEqual(57, attributes.Count, "attributes count");
         }
     }
 
