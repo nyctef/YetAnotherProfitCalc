@@ -151,9 +151,21 @@ WHERE r.typeID = {0}
 			}
 		}
 
-        public static string GetTypeName(TypeID matID)
+        public static string GetTypeName(TypeID typeID)
         {
-            var query = @"select typeName from invTypes where typeID = " + matID + ";";
+            var query = @"select typeName from invTypes where typeID = " + typeID + ";";
+            return DefaultDatabase.RunSQLStringQuery(query);
+        }
+
+        public static string GetGroupName(GroupID groupID)
+        {
+            var query = @"select groupName from invGroups where groupID = " + groupID + ";";
+            return DefaultDatabase.RunSQLStringQuery(query);
+        }
+
+        public static string GetAttributeName(AttributeID attrID)
+        {
+            var query = @"select displayName from dgmAttributeTypes where attributeID = " + attrID + ";";
             return DefaultDatabase.RunSQLStringQuery(query);
         }
 
@@ -219,7 +231,7 @@ WHERE r.typeID = {0}
         public static List<AttributeValue> GetAttributesForType(TypeID typeID)
         {
             var query = @"
-SELECT ta.attributeID, valueInt, valueFloat, attributeName, at.description, at.displayName, at.categoryID, u.unitName, u.displayName, u.description
+SELECT ta.attributeID, valueInt, valueFloat, attributeName, at.description, at.displayName, at.categoryID, u.unitID, u.unitName, u.displayName, u.description
 FROM dgmTypeAttributes AS ta
 INNER JOIN dgmAttributeTypes AS at ON ta.attributeID = at.attributeID
 INNER JOIN eveUnits AS u ON at.unitID = u.unitID
@@ -234,20 +246,22 @@ LIMIT 100
                 var results = new List<AttributeValue>();
                 while (reader.Read())
                 {
-                    var unit = new Unit(new UnitID((int)reader["u.unitID"]), (string)reader["u.unitName"], 
-                        (string)reader["u.displayName"], (string)reader["u.description"]);
-                    var attribute = new Attribute(new AttributeID((int)reader["ta.attributeID"]), (string)reader["attributeName"],
-                        (string)reader["at.displayName"], (string)reader["at.description"], unit, 
-                        AttributeCategory.Get((int)reader["at.categoryID"]));
+                    // todo: referencing columns by name doesn't seem to support names like at.description. There must be a better workaround for that
+                    var unitDesc = reader[10];
+                    var unit = Unit.Get(new UnitID((byte)reader[7]), (string)reader[8], 
+                        (string)reader[9], unitDesc is DBNull ? "" : (string)unitDesc);
+                    var attribute = new Attribute(new AttributeID((short)reader[0]), (string)reader[3],
+                        (string)reader[5], (string)reader[4], unit, 
+                        AttributeCategory.Get((byte)reader[6]));
 
                     AttributeValue value;
-                    if (reader["valueInt"] != null)
+                    if (reader["valueFloat"] is DBNull)
                     {
-                        value = new AttributeValue(attribute, (int)reader["valueInt"]);
+                        value = new AttributeValue(attribute, (int)reader[1]);
                     }
                     else
                     {
-                        value = new AttributeValue(attribute, (float)reader["valueFloat"]);
+                        value = new AttributeValue(attribute, (float)(double)reader[2]);
                     }
                     results.Add(value);
                 }

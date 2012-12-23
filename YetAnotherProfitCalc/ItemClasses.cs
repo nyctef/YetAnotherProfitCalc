@@ -183,7 +183,7 @@ namespace YetAnotherProfitCalc
         public float FloatValue { get; private set; }
         public bool IsInt { get; private set; }
 
-        public string Value { get { return IsInt ? IntValue.ToString() : FloatValue.ToString(); } }
+        public string Value { get { return Attribute.Unit.Format(IsInt ? IntValue.ToString() : FloatValue.ToString()); } }
 
         public AttributeValue(Attribute attr, int value) 
         {
@@ -207,26 +207,129 @@ namespace YetAnotherProfitCalc
 
     public class Unit
     {
+        public static Unit Get(UnitID id, string name, string dName, string desc)
+        {
+            switch (id.ToInt()) {
+                case 140: // Level X
+                case 136: // Slot X
+                    return new PrefixUnit(id, name, dName, desc);
+                case 139: // (Bonus) +X
+                    return new BonusUnit(id, name, dName, desc);
+                case 115: // groupID
+                    return new GroupIdUnit(id, name, dName, desc);
+                case 116: // typeID
+                    return new TypeIdUnit(id, name, dName, desc);
+                case 117: // size
+                    return new SizeClassUnit(id, name, dName, desc);
+                case 119: // attributeID
+                    return new AttributeIdUnit(id, name, dName, desc);
+                case 137: // bool
+                    return new BoolUnit(id, name, dName, desc);
+                default:
+                    return new Unit(id, name, dName, desc);
+            }
+        }
+
         public UnitID ID { get; private set; }
         public string UnitName { get; private set; }
         public string DisplayName { get; private set; }
         public string Description { get; private set; }
 
-        public Unit(UnitID id, string name, string dName, string desc)
+        protected Unit(UnitID id, string name, string dName, string desc)
         {
             ID = id;
             UnitName = name;
-            DisplayName = name;
+            DisplayName = dName;
             Description = desc;
         }
 
-        public bool IsPrefix
+        public virtual string Format(object input)
         {
-            get
+            return String.Format("{0}" + DisplayName, input);
+        }
+    }
+
+    public class PrefixUnit : Unit
+    {
+        public PrefixUnit(UnitID id, string name, string dName, string desc) : base (id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            return String.Format(DisplayName + " {0}", input);
+        }
+    }
+
+    public class BonusUnit : Unit
+    {
+        public BonusUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            return String.Format(DisplayName + "{0}", input);
+        }
+    }
+
+    public class GroupIdUnit : Unit
+    {
+        public GroupIdUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            var groupId = new GroupID(input.ToInt());
+            return CommonQueries.GetGroupName(groupId);
+        }
+    }
+
+    public class TypeIdUnit : Unit
+    {
+        public TypeIdUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            var typeId = new TypeID(input.ToInt());
+            return CommonQueries.GetTypeName(typeId);
+        }
+    }
+
+    public class AttributeIdUnit : Unit
+    {
+        public AttributeIdUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            var attrID = new AttributeID(input.ToInt());
+            return CommonQueries.GetAttributeName(attrID);
+        }
+    }
+
+    public class SizeClassUnit : Unit
+    {
+        public SizeClassUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            var size = input.ToInt();
+            switch (size) {
+                case 1: return "Small";
+                case 2: return "Medium";
+                case 3: return "Large";
+                default: throw new ArgumentOutOfRangeException("input");
+            }
+        }
+    }
+
+    public class BoolUnit : Unit
+    {
+        public BoolUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            var size = input.ToInt();
+            switch (size)
             {
-                return ID == new UnitID(139) || // Bonus: +X
-                    ID == new UnitID(140) || // Level X
-                    ID == new UnitID(136); // Slot X
+                case 1: return "True";
+                case 0: return "False";
+                default: throw new ArgumentOutOfRangeException("input");
             }
         }
     }
