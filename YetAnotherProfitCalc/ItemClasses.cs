@@ -178,18 +178,4 @@ namespace YetAnotherProfitCalc
             get { return CommonQueries.GetMaterialID(Name); }
         }
 	}
-
-
-
-    /*
-     * 
-     * Ideas:
-     * eft fit price checker
-     * pull multiple typeIDs from e-c at once
-     * display age/reliability of prices retrieved
-     * 
-     */
-
-
-
 }

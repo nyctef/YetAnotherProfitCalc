@@ -29,7 +29,7 @@ namespace YetAnotherProfitCalc
         }
     }
     
-    static class CommonQueries
+    public static class CommonQueries
     {
         public static SQLiteDumpWrapper DefaultDatabase = new SQLiteDumpWrapper();
 
@@ -135,6 +135,20 @@ WHERE r.typeID = {0}
                     yield return new MaterialID(results["typeID"].ToInt());
                 }
             }
+		}
+
+        public static IEnumerable<Tuple<string, TypeID>> GetTypesWithNamesLike(string searchString, int limit = 30)
+		{
+			using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
+			{
+				cnn.Open();
+				var query = @"select typeID, typeName from invTypes where typeName like """ + searchString + @""" LIMIT "+limit+";";
+				var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
+				while (results.Read())
+				{
+                    yield return Tuple.Create(results["typeName"].ToString(), new TypeID(results["typeID"].ToInt()));
+				}
+			}
 		}
 
         public static string GetTypeName(TypeID matID)

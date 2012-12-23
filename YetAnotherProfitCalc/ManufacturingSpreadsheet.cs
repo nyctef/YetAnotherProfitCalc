@@ -10,12 +10,13 @@ namespace YetAnotherProfitCalc
     class ManufacturingSpreadsheet
     {
 
-        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null, Cell blueprintCost = null) where TSpreadsheet : class, Spreadsheet, new()
+        public static TSpreadsheet Create<TSpreadsheet>(IBlueprint bp, int rowNum = 0, TSpreadsheet existing = null, Cell blueprintCost = null, int numToMake = 1) where TSpreadsheet : class, Spreadsheet, new()
         {
             var spreadsheet = existing ?? new TSpreadsheet();
 
             spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(bp.Product)), 0, rowNum);
-            var quantity = new SimpleCell("100");
+            var quantity = new SimpleCell(numToMake.ToString());
+
             var brokerFee = new SimpleCell("0.0045");
             var transactionTax = new SimpleCell("0.0105");
             rowNum++;
@@ -39,6 +40,7 @@ namespace YetAnotherProfitCalc
             {
                 spreadsheet.AddCell(new SimpleCell(CommonQueries.GetTypeName(mat.matID)), 0, rowNum);
                 var matQty = spreadsheet.AddCell(new SimpleCell("=" + mat.quantity.ToString() + "*" + mat.damagePerJob.ToString()), 1, rowNum);
+
                 var buy = spreadsheet.AddCell(new EveCentralCell(mat.matID, type:PriceType.buy, measure:PriceMeasure.max), 2, rowNum);
                 var sell = spreadsheet.AddCell(new EveCentralCell(mat.matID, type: PriceType.sell, measure: PriceMeasure.min), 3, rowNum);
                 var bfAmount = spreadsheet.AddCell(new FormulaCell("={0}*{1}", brokerFee, buy), 4, rowNum);
@@ -46,6 +48,7 @@ namespace YetAnotherProfitCalc
                 var buysell = spreadsheet.AddCell(new SimpleCell("Sell"), 6, rowNum);
 
                 var unitCost = spreadsheet.AddCell(new FormulaCell("=if({0}=\"Sell\",{1},if({0}=\"Buy\",{2}+{3},{0}+{3}))", buysell, sell, buy, bfAmount), 7, rowNum);
+
                 bottomUnitCost = unitCost; topUnitCost = topUnitCost ?? unitCost;
 
                 var costPerRun = spreadsheet.AddCell(new FormulaCell("={0}*{1}", unitCost, matQty), 8, rowNum);
@@ -126,9 +129,12 @@ namespace YetAnotherProfitCalc
         public void MedTrimark(string typeName)
         {
             var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
-            Console.WriteLine("------");
+
+			Console.WriteLine("------");
             Console.WriteLine(ManufacturingSpreadsheet.Create<TSVSpreadsheet>(bp).Export());
             Console.WriteLine("------");
         }
+
+
     }
 }
