@@ -50,6 +50,7 @@ namespace YetAnotherProfitCalc.WPF.UI
         }
     }
 
+    [Serializable]
     public class BindingException : Exception
     {
         public BindingException() : base() { }
