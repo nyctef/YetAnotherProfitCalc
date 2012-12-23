@@ -183,6 +183,8 @@ namespace YetAnotherProfitCalc
         public float FloatValue { get; private set; }
         public bool IsInt { get; private set; }
 
+        public string Value { get { return IsInt ? IntValue.ToString() : FloatValue.ToString(); } }
+
         public AttributeValue(Attribute attr, int value) 
         {
             Attribute = attr;

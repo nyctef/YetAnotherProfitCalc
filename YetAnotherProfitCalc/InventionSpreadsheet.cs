@@ -119,16 +119,5 @@ namespace YetAnotherProfitCalc
         }
     }
 
-    class InventionBlueprintTests
-    {
-        [TestCase("Stiletto", null)]
-        [TestCase("Sabre", "Formation Layout")]
-        public void TestInventionSpreadsheet(string typeName, string decryptorName)
-        {
-            var bp = new T2Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
-            Console.WriteLine("------");
-            Console.WriteLine(InventionSpreadsheet.Create<TSVSpreadsheet>(bp, decryptor:Decryptor.Get(decryptorName)).Export());
-            Console.WriteLine("------");
-        }
-    }
+    
 }

@@ -72,6 +72,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spreadsheet.cs" />
     <Compile Include="SqliteDumpWrapper.cs" />
+    <Compile Include="Tests\BlueprintsTests.cs" />
+    <Compile Include="Tests\CommonQueriesTests.cs" />
+    <Compile Include="Tests\SpreadsheetTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

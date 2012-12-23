@@ -209,12 +209,6 @@ WHERE r.typeID = {0}
             }
         }
 
-        [TestCase(0, 10, Result = 0.1)]
-        [TestCase(-1, 10, Result = 0.2)]
-        [TestCase(-4, 10, Result = 0.5)]
-        [TestCase(1, 10, Result = 0.05)]
-        [TestCase(2, 10, Result = 0.1 / 3)]
-        [TestCase(0, 5, Result = 0.05)]
         public static decimal GetWasteForME(int ME, int wasteFactor = 10)
         {
             var factor = (ME >= 0) ? (1m / (ME + 1)) / 10m 

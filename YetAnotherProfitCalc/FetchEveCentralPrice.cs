@@ -59,12 +59,5 @@ namespace YetAnotherProfitCalc
 		}
 	}
 
-	class FetchEveCentralPriceTests
-	{
-		[TestCase(25601)]
-		public void Test(int typeId)
-		{
-			Console.WriteLine(FetchEveCentralPrice.FetchPrice(typeId));
-		}
-	}
+	
 }

@@ -122,19 +122,5 @@ namespace YetAnotherProfitCalc
 
     }
 
-    public class ManufacturingSpreadsheetTests
-    {
-        [TestCase("Medium Trimark Armor Pump I")]
-        [TestCase("Warrior II")]
-        public void MedTrimark(string typeName)
-        {
-            var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);
-
-			Console.WriteLine("------");
-            Console.WriteLine(ManufacturingSpreadsheet.Create<TSVSpreadsheet>(bp).Export());
-            Console.WriteLine("------");
-        }
-
-
-    }
+    
 }
