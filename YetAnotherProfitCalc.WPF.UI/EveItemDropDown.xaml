@@ -5,12 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" d:DesignWidth="300" Height="27"
              xmlns:local="clr-namespace:YetAnotherProfitCalc.WPF.UI">
-    <ComboBox IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+    
+    <ComboBox IsEditable="True" 
+              StaysOpenOnEdit="True" 
+              IsTextSearchEnabled="False"
               ItemsSource="{Binding Path=Items,Mode=TwoWay}"
               Text="{Binding Path=Input,Mode=TwoWay}"
               DisplayMemberPath="ItemName"
               IsDropDownOpen="{Binding Path=DropdownShouldBeOpen}"
               SelectedItem="{Binding Path=SelectedItem,Mode=TwoWay}"
+              Validation.ErrorTemplate="{x:Null}"
               Name="ComboBox">
     </ComboBox>
+    
 </UserControl>
