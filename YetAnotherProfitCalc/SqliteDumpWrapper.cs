@@ -44,6 +44,7 @@ namespace YetAnotherProfitCalc
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public SQLiteDataReader RunSQLTableQuery(string sql, SQLiteConnection cnn)
         {
             var dt = new DataTable();
@@ -66,6 +67,7 @@ namespace YetAnotherProfitCalc
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public string RunSQLStringQuery(string sql, SQLiteConnection cnn)
         {
             using (SQLiteCommand mycommand = new SQLiteCommand(cnn))
