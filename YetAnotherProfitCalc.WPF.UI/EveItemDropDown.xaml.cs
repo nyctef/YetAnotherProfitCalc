@@ -76,10 +76,8 @@ namespace YetAnotherProfitCalc.WPF.UI
         {
             switch (args.PropertyName) {
                 case "SelectedName":
-                    NotifyPropertyChangedBase.FirePropertyChanged("SelectedName", PropertyChanged, this);
-                    break;
                 case "SelectedID":
-                    NotifyPropertyChangedBase.FirePropertyChanged("SelectedID", PropertyChanged, this);
+                    NotifyPropertyChangedBase.FirePropertyChanged(args.PropertyName, PropertyChanged, this);
                     break;
             }
         }
