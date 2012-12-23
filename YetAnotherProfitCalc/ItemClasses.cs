@@ -274,8 +274,9 @@ namespace YetAnotherProfitCalc
 		public int MlResult { get; private set; }
 		public int PlResult { get; private set; }
         public string Name { get; private set; }
+        public MaterialID MaterialID { get; private set; }
 		
-		public Decryptor(decimal inventionMod, int runsMod, int mlResult, int plResult)
+		private Decryptor(decimal inventionMod, int runsMod, int mlResult, int plResult)
 		{
 			InventionMod = inventionMod;
 			RunsMod = runsMod;
@@ -283,14 +284,11 @@ namespace YetAnotherProfitCalc
 			PlResult = plResult;
 		}
 
-        public Decryptor WithName(string name)
+        private Decryptor WithName(string name)
         {
             Name = name;
+            MaterialID = CommonQueries.GetMaterialID(name);
             return this;
-        }
-
-        public MaterialID MaterialID {
-            get { return CommonQueries.GetMaterialID(Name); }
         }
 	}
 }
