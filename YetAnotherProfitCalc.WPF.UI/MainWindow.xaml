@@ -16,10 +16,8 @@
                 </TabControl.Height>
                 <TabItem Name="tabItem1" Header="Item1">
                     <StackPanel>
-                        <Button>Button1</Button>
-                        <Button>Button2</Button>
-                        <Label>Label1</Label>
-                        <local:EveItemDropDown/>
+                        <local:EveItemDropDown x:Name="EIDD"/>
+                        <Label Content="{Binding ElementName=EIDD,Path=SelectedName}"></Label>
                     </StackPanel>
                 </TabItem>
                 <TabItem Name="tabItem2" Header="Item2">Item 2</TabItem>

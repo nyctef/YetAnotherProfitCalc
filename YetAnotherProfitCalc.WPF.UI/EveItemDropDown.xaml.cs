@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace YetAnotherProfitCalc.WPF.UI
     /// <summary>
 	/// Interaction logic for EveItemDropDown.xaml
 	/// </summary>
-	partial class EveItemDropDown : UserControl
+	partial class EveItemDropDown : UserControl, INotifyPropertyChanged
 	{
         private EveItemDropDownModel m_ViewModel;
 		public EveItemDropDown()
@@ -27,6 +28,7 @@ namespace YetAnotherProfitCalc.WPF.UI
             m_ViewModel = new EveItemDropDownModel();
             ComboBox.DataContext = ViewModel;
             ComboBox.DropDownOpened += DeselectText;
+            m_ViewModel.PropertyChanged += ViewModelPropertyChanged;
 		}
 
         /// <summary>
@@ -53,5 +55,35 @@ namespace YetAnotherProfitCalc.WPF.UI
         {
             get { return (TextBox)ComboBox.Template.FindName("PART_EditableTextBox", ComboBox); }
         }
+
+        public string SelectedName
+        {
+            get
+            {
+                return m_ViewModel != null ? m_ViewModel.SelectedName : null;
+            }
+        }
+
+        public TypeID SelectedID
+        {
+            get
+            {
+                return m_ViewModel != null ? m_ViewModel.SelectedID : null;
+            }
+        }
+
+        private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            switch (args.PropertyName) {
+                case "SelectedName":
+                    NotifyPropertyChangedBase.FirePropertyChanged("SelectedName", PropertyChanged, this);
+                    break;
+                case "SelectedID":
+                    NotifyPropertyChangedBase.FirePropertyChanged("SelectedID", PropertyChanged, this);
+                    break;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

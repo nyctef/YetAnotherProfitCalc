@@ -13,17 +13,26 @@ namespace YetAnotherProfitCalc.WPF.UI
 
         protected void FirePropertyChanged(string propName)
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propName));
+            FirePropertyChanged(propName, PropertyChanged, this);
+        }
+
+        static public void FirePropertyChanged(string propName, PropertyChangedEventHandler handler, object sender)
+        {
+            if (handler != null) handler(sender, new PropertyChangedEventArgs(propName));
         }
 
         protected void UpdateProperty<T>(string propName, ref T property, T newValue)
+        {
+            UpdateProperty(propName, ref property, newValue, PropertyChanged, this);
+        }
+
+        static public void UpdateProperty<T>(string propName, ref T property, T newValue, PropertyChangedEventHandler handler, object sender)
         {
             var comparer = EqualityComparer<T>.Default;
             if (!comparer.Equals(property, newValue))
             {
                 property = newValue;
-                FirePropertyChanged(propName);
+                FirePropertyChanged(propName, handler, sender);
             }
         }
     }

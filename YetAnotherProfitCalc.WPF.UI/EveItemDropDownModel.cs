@@ -31,11 +31,40 @@ namespace YetAnotherProfitCalc.WPF.UI
 		/// Number of characters that must be entered in the dropdown before it starts searching for items
 		/// </summary>
 		private readonly int m_MinCharacters;
+
         private bool m_DropdownShouldBeOpen;
+        private EveItem m_SelectedItem;
 
         public ObservableCollection<EveItem> Items { get; private set; }
 
         public bool DropdownShouldBeOpen { get { return m_DropdownShouldBeOpen; } set { m_DropdownShouldBeOpen = value; } }
+
+        public EveItem SelectedItem { get { return m_SelectedItem; } 
+            set 
+            { 
+                m_SelectedItem = value;
+                FirePropertyChanged("SelectedName");
+                FirePropertyChanged("SelectedID");
+            } 
+        }
+
+        public string SelectedName
+        {
+            get
+            {
+                var item = SelectedItem;
+                return !item.Equals(default(EveItem)) ? item.ItemName : null;
+            }
+        }
+
+        public TypeID SelectedID
+        {
+            get
+            {
+                var item = SelectedItem;
+                return !item.Equals(default(EveItem)) ? item.TypeID : new TypeID(0);
+            }
+        }
 
         public static IEnumerable<EveItem> Completions(string input)
         {
@@ -72,7 +101,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 			Items = new ObservableCollection<EveItem>();
 		}
 
-		public void UpdateItems(IEnumerable<EveItem> items)
+		private void UpdateItems(IEnumerable<EveItem> items)
 		{
 			Items.Clear();
 			foreach (var item in items)
