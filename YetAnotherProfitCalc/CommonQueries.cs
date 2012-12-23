@@ -248,10 +248,17 @@ LIMIT 100
                 {
                     // todo: referencing columns by name doesn't seem to support names like at.description. There must be a better workaround for that
                     var unitDesc = reader[10];
-                    var unit = Unit.Get(new UnitID((byte)reader[7]), (string)reader[8], 
-                        (string)reader[9], unitDesc is DBNull ? "" : (string)unitDesc);
-                    var attribute = new Attribute(new AttributeID((short)reader[0]), (string)reader[3],
-                        (string)reader[5], (string)reader[4], unit, 
+                    var unitDispName = reader[9];
+                    var unit = Unit.Get(new UnitID((byte)reader[7]), 
+                        (string)reader[8], 
+                        unitDispName is DBNull ? "" : (string)unitDispName, 
+                        unitDesc     is DBNull ? "" : (string)unitDesc);
+                    var attrDispName = reader[5];
+                    var attribute = new Attribute(new AttributeID((short)reader[0]), 
+                        (string)reader[3],
+                        attrDispName is DBNull ? "" : (string)attrDispName, 
+                        (string)reader[4], 
+                        unit, 
                         AttributeCategory.Get((byte)reader[6]));
 
                     AttributeValue value;

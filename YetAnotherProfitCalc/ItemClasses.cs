@@ -225,6 +225,10 @@ namespace YetAnotherProfitCalc
                     return new AttributeIdUnit(id, name, dName, desc);
                 case 137: // bool
                     return new BoolUnit(id, name, dName, desc);
+                case 118: // ore units
+                case 138: // units
+                case 141: // hardpoints
+                    return new BlankUnit(id, name, dName, desc);
                 default:
                     return new Unit(id, name, dName, desc);
             }
@@ -331,6 +335,16 @@ namespace YetAnotherProfitCalc
                 case 0: return "False";
                 default: throw new ArgumentOutOfRangeException("input");
             }
+        }
+    }
+
+    public class BlankUnit : Unit 
+    {
+        public BlankUnit(UnitID id, string name, string dName, string desc) : base(id, name, dName, desc) { }
+
+        public override string Format(object input)
+        {
+            return input.ToString();
         }
     }
 

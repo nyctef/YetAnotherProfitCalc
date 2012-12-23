@@ -22,7 +22,7 @@ namespace YetAnotherProfitCalc.Tests
 
         public void TestGetAttributesForType()
         {
-            var attributes = CommonQueries.GetAttributesForType(new TypeID(192));
+            var attributes = CommonQueries.GetAttributesForType(new TypeID(23757));
             foreach (var attr in attributes)
             {
                 Console.WriteLine(attr.Attribute.DisplayName + ": " + attr.Value);
