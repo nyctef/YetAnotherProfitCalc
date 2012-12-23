@@ -77,7 +77,7 @@ namespace YetAnotherProfitCalc
         public BlueprintID(int value) : base(value) { }
     }
 
-	public class GroupID : TypeID
+    public class GroupID : PrimitiveWrapper<int>
     {
         #region groupIDs
         public static readonly GroupID DataInterfaces = new GroupID(716);
@@ -94,16 +94,126 @@ namespace YetAnotherProfitCalc
         public GroupID(int value) : base(value) { }
 	}
 
-	public class CategoryID : TypeID
+    public class CategoryID : PrimitiveWrapper<int>
 	{
 		public static readonly CategoryID Skill = new CategoryID(16);
 
 		public CategoryID(int value) : base(value) { }
 	}
 
-    public class AttributeID : TypeID
+    public class AttributeID : PrimitiveWrapper<int>
     {
         public AttributeID(int value) : base(value) { }
+    }
+
+    public class AttributeCategory
+    {
+        #region Categories
+
+        // TODO: actually we should probably populate this from dgmAttributeCategories. Oh well.
+
+        public static AttributeCategory Get(int id)
+        {
+            switch (id) {
+                case 1: return Fitting;
+                case 2: return Shield;
+                case 3: return Armor;
+                case 4: return Structure;
+                case 5: return Capacitor;
+                case 6: return Targeting;
+                case 7: return Miscellaneous;
+                case 8: return Required;
+                case 9: return NULL;
+                case 10: return Drones;
+                case 12: return AI;
+                default: throw new ArgumentOutOfRangeException("id");
+            }
+        }
+
+        public static AttributeCategory Fitting = new AttributeCategory(1,"Fitting","Fitting capabilities of a ship");
+        public static AttributeCategory Shield = new AttributeCategory(2, "Shield", "Shield attributes of ships");
+        public static AttributeCategory Armor = new AttributeCategory(3, "Armor", "Armor attributes of ships");
+        public static AttributeCategory Structure = new AttributeCategory(4, "Structure", "Structure attributes of ships");
+        public static AttributeCategory Capacitor = new AttributeCategory(5, "Capacitor", "Capacitor attributes for ships");
+        public static AttributeCategory Targeting = new AttributeCategory(6, "Targeting", "Targeting Attributes for ships");
+        public static AttributeCategory Miscellaneous = new AttributeCategory(7, "Miscellaneous", "Misc. attributes");
+        public static AttributeCategory Required = new AttributeCategory(8, "Required Skills", "Skill requirements");
+        public static AttributeCategory NULL = new AttributeCategory(9, "NULL", "Attributes already checked and not going into a category");
+        public static AttributeCategory Drones = new AttributeCategory(10, "Drones", "All you need to know about drones");
+        public static AttributeCategory AI = new AttributeCategory(12, "AI", "Attribs for the AI configuration");
+
+        #endregion
+
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+        public int ID { get; private set; }
+
+        public AttributeCategory(int id, string name, string desc) 
+        {
+            ID = id;
+            Name = name;
+            Description = desc;
+        }
+    }
+
+    public class Attribute
+    {
+        public AttributeID ID { get; private set; }
+        public string AttributeName { get; private set; }
+        public string DisplayName { get; private set; }
+        public string Description { get; private set; }
+        public UnitID UnitID { get; private set; }
+
+        public Attribute(AttributeID id, string name, string dName, string desc, UnitID unitID)
+        {
+            ID = id;
+            AttributeName = name;
+            DisplayName = dName;
+            Description = desc;
+            UnitID = unitID;
+        }
+    }
+
+    public class AttributeValue<T> // is int or float
+    {
+        public Attribute Attribute { get; private set; }
+        public T Value { get; private set; }
+        public AttributeValue(Attribute attr, T value) 
+        {
+            Attribute = attr;
+            Value = value;
+        }
+    }
+
+    public class UnitID : PrimitiveWrapper<int>
+    {
+        public UnitID(int value) : base(value) { }
+    }
+
+    public class Unit
+    {
+        public UnitID ID { get; private set; }
+        public string UnitName { get; private set; }
+        public string DisplayName { get; private set; }
+        public string Description { get; private set; }
+
+        public Unit(UnitID id, string name, string dName, string desc)
+        {
+            ID = id;
+            UnitName = name;
+            DisplayName = name;
+            Description = desc;
+        }
+
+        public bool IsPrefix
+        {
+            get
+            {
+                return ID == new UnitID(139) || // Bonus: +X
+                    ID == new UnitID(140) || // Level X
+                    ID == new UnitID(136); // Slot X
+            }
+        }
     }
 
     public class ISK : PrimitiveWrapper<decimal>
