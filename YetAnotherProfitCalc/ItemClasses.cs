@@ -269,7 +269,15 @@ namespace YetAnotherProfitCalc
 
         public override string Format(object input)
         {
-            return String.Format(DisplayName + "{0}", input);
+            var value = input.ToDecimal();
+            if (value >= 0)
+            {
+                return String.Format(DisplayName + "{0}", input);
+            }
+            else
+            {
+                return input.ToString();
+            }
         }
     }
 
