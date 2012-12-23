@@ -119,7 +119,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 	/// <summary>
 	/// An actor which runs on a background thread and delivers completion data to <see cref="EveItemDropDownModel"/>
 	/// </summary>
-	class EveItemCompletionFetcher
+	class EveItemCompletionFetcher : DisposableBase
 	{
 		private readonly object m_Sync = new object();
 
@@ -169,5 +169,19 @@ namespace YetAnotherProfitCalc.WPF.UI
 				cts.Cancel();
 			}
 		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                try
+                {
+                    cts.Dispose();
+                    cts = null;
+                }
+                catch { }
+            }
+            base.Dispose(disposing);
+        }
 	}
 }
