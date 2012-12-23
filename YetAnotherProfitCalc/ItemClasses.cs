@@ -101,6 +101,11 @@ namespace YetAnotherProfitCalc
 		public CategoryID(int value) : base(value) { }
 	}
 
+    public class AttributeID : TypeID
+    {
+        public AttributeID(int value) : base(value) { }
+    }
+
     public class ISK : PrimitiveWrapper<decimal>
     {
         public ISK(decimal value) : base(value) { }
