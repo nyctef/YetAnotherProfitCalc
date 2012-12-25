@@ -15,8 +15,8 @@
         <ScrollViewer DockPanel.Dock="Bottom">
             <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Attributes}">
                 <DataGrid.Columns>
-                <DataGridTextColumn Header="" Width="SizeToCells" IsReadOnly="True" Binding="{Binding Path=Attribute.DisplayName}"/>
-                <DataGridTextColumn IsReadOnly="True" Binding="{Binding Value}"/>
+                    <DataGridTextColumn Width="SizeToCells" IsReadOnly="True" Binding="{Binding Path=Attribute.DisplayName}"/>
+                    <DataGridTextColumn Width="*"  IsReadOnly="True" Binding="{Binding Value}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
