@@ -14,7 +14,7 @@
                             x:Name="ItemDescription" 
                             ItemID="{Binding ElementName=EIDD,Path=SelectedID,Mode=OneWay}" 
                             />
-                </DockPanel>
+                    </DockPanel>
                 </TabItem>
                 <TabItem Name="tabItem2" Header="Item2">Item 2</TabItem>
                 <TabItem Name="tabItem3" Header="Item3">Item 3</TabItem>
