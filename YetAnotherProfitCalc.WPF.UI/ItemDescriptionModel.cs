@@ -14,6 +14,8 @@ namespace YetAnotherProfitCalc.WPF.UI
 
         public static readonly DependencyProperty ItemNameProperty = DependencyProperty.Register("ItemName", typeof(string), typeof(ItemDescriptionModel));
 
+        public static readonly DependencyProperty ItemDescriptionProperty = DependencyProperty.Register("ItemDescription", typeof(string), typeof(ItemDescriptionModel));
+
         public static readonly DependencyProperty AttributesProperty = DependencyProperty.Register("Attributes", typeof(ObservableCollection<AttributeValue>), typeof(ItemDescriptionModel));
         
         public TypeID ItemID 
@@ -25,6 +27,7 @@ namespace YetAnotherProfitCalc.WPF.UI
                 {
                     SetValue(ItemIDProperty, value);
                     ItemName = CommonQueries.GetTypeName(value);
+                    ItemDescription = CommonQueries.GetTypeDescription(value);
                     Attributes = new ObservableCollection<AttributeValue>(CommonQueries.GetAttributesForType(value));
                 }
             } 
@@ -34,6 +37,12 @@ namespace YetAnotherProfitCalc.WPF.UI
         {
             get { return (string)GetValue(ItemNameProperty); }
             set { SetValue(ItemNameProperty, value); }
+        }
+
+        public string ItemDescription
+        {
+            get { return (string)GetValue(ItemDescriptionProperty); }
+            set { SetValue(ItemDescriptionProperty, value); }
         }
 
         public ObservableCollection<AttributeValue> Attributes

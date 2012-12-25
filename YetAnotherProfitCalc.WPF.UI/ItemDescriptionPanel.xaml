@@ -3,22 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YetAnotherProfitCalc.WPF.UI"
              mc:Ignorable="d" 
              d:DesignHeight="432.469" d:DesignWidth="399.421">
+    <UserControl.Resources>
+        <local:TypeIDConverter x:Key="TypeIDConverter" />
+    </UserControl.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
+            <TextBox Text="{Binding Path=ItemID,Converter={StaticResource TypeIDConverter}}" 
+                     IsReadOnly="True"
+                     Width="50"
+                     DockPanel.Dock="Right"/>
             <Label Content="{Binding ItemName}" 
-                   Height="28" Width="275"
-                   DockPanel.Dock="Left"/>
-            <Label Content="{Binding ItemID}"/>
+                   Height="28" />
         </DockPanel>
         <ScrollViewer DockPanel.Dock="Bottom">
-            <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Attributes}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Width="SizeToCells" IsReadOnly="True" Binding="{Binding Path=Attribute.DisplayName}"/>
-                    <DataGridTextColumn Width="*"  IsReadOnly="True" Binding="{Binding Value}"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <DockPanel>
+                <TextBlock Text="{Binding ItemDescription}" DockPanel.Dock="Top" TextWrapping="Wrap"/>
+                <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Attributes}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="SizeToCells" IsReadOnly="True" Binding="{Binding Path=Attribute.DisplayName}"/>
+                        <DataGridTextColumn Width="*"  IsReadOnly="True" Binding="{Binding Value}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
         </ScrollViewer>
     </DockPanel>
 </UserControl>

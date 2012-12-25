@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,23 @@ using System.Windows.Shapes;
 
 namespace YetAnotherProfitCalc.WPF.UI
 {
+    [ValueConversion(typeof(TypeID), typeof(String))]
+    internal class TypeIDConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            Debug.Assert(targetType == typeof(String));
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            Debug.Assert(targetType == typeof(TypeID));
+            Debug.Assert(value.GetType() == typeof(String));
+            return new TypeID(value.ToInt());
+        }
+    }
+
     /// <summary>
     /// Interaction logic for ItemDescriptionPanel.xaml
     /// </summary>
