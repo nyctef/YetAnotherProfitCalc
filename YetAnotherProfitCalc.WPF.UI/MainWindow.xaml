@@ -5,25 +5,22 @@
         Title="MainWindow" Height="700" Width="514">
     <DockPanel>
         <Menu DockPanel.Dock="top" Height="20"/>
-        <TabPanel DockPanel.Dock="Bottom">
+        <!--<TabPanel DockPanel.Dock="Bottom">-->
             <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="tabControl1" >
-              <!-- Hack: make tabcontrol take up as much space as possible -->
-                <TabControl.Width>
-                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type TabPanel}}" />
-                </TabControl.Width>
-                <TabControl.Height>
-                  <Binding Path="ActualHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type TabPanel}}" />
-                </TabControl.Height>
                 <TabItem Name="tabItem1" Header="Item1">
                     <StackPanel>
                         <local:EveItemDropDown x:Name="EIDD"/>
-                        <Label Content="{Binding ElementName=EIDD,Path=SelectedName}"></Label>
+                        <local:ItemDescriptionPanel 
+                            x:Name="ItemDescription" 
+                            ItemID="{Binding ElementName=EIDD,Path=SelectedID,Mode=OneWay}" 
+                            Height="162"   
+                            />
                     </StackPanel>
                 </TabItem>
                 <TabItem Name="tabItem2" Header="Item2">Item 2</TabItem>
                 <TabItem Name="tabItem3" Header="Item3">Item 3</TabItem>
                 <TabItem Name="tabItem4" Header="Item4">Item 4</TabItem>
             </TabControl>
-        </TabPanel>
+        <!-- </TabPanel> -->
     </DockPanel>
 </Window>

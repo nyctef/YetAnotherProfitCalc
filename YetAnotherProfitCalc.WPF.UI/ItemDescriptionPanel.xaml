@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="YetAnotherProfitCalc.WPF.UI.ItemDescriptionPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="432.469" d:DesignWidth="399.421">
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Content="{Binding Path='ItemName'}" Height="28" Width="275"/>
+            <Label Content="{Binding Path='ItemID'}" Width="125"/>
+        </StackPanel>
+        <ScrollViewer DockPanel.Dock="Bottom">
+            <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Attributes}">
+                <DataGrid.Columns>
+                <DataGridTextColumn Header="" Width="SizeToCells" IsReadOnly="True" Binding="{Binding Path=Attribute.DisplayName}"/>
+                <DataGridTextColumn IsReadOnly="True" Binding="{Binding Value}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
