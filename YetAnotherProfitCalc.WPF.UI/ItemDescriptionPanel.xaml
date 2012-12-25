@@ -6,10 +6,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="432.469" d:DesignWidth="399.421">
     <DockPanel>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Label Content="{Binding Path='ItemName'}" Height="28" Width="275"/>
-            <Label Content="{Binding Path='ItemID'}" Width="125"/>
-        </StackPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Label Content="{Binding ItemName}" 
+                   Height="28" Width="275"
+                   DockPanel.Dock="Left"/>
+            <Label Content="{Binding ItemID}"/>
+        </DockPanel>
         <ScrollViewer DockPanel.Dock="Bottom">
             <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Attributes}">
                 <DataGrid.Columns>
