@@ -22,12 +22,14 @@ namespace YetAnotherProfitCalc.WPF.UI
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null) return "<null>";
             Debug.Assert(targetType == typeof(String));
             return value.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null) value = 0;
             Debug.Assert(targetType == typeof(TypeID));
             Debug.Assert(value.GetType() == typeof(String));
             return new TypeID(value.ToInt());
