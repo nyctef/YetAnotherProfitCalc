@@ -89,7 +89,7 @@
     <Compile Include="EveItemDropDown.xaml.cs">
       <DependentUpon>EveItemDropDown.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EveItemDropDownModel.cs" />
+    <Compile Include="EveItemDropDownCompletionsModel.cs" />
     <Compile Include="ItemDescriptionModel.cs" />
     <Compile Include="ItemDescriptionPanel.xaml.cs">
       <DependentUpon>ItemDescriptionPanel.xaml</DependentUpon>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -19,100 +20,151 @@ namespace YetAnotherProfitCalc.WPF.UI
     /// <summary>
 	/// Interaction logic for EveItemDropDown.xaml
 	/// </summary>
-	partial class EveItemDropDown : UserControl, INotifyPropertyChanged
+	partial class EveItemDropDown : UserControl
 	{
-        private EveItemDropDownModel m_ViewModel;
-		public EveItemDropDown()
-        {
-            InitializeComponent();
-            m_ViewModel = new EveItemDropDownModel();
-            ComboBox.DataContext = ViewModel;
-            ComboBox.DropDownOpened += DeselectText;
-            ComboBox.DropDownClosed += FinishOrCancelSelection;
-            m_ViewModel.PropertyChanged += ViewModelPropertyChanged;
-            ComboBox.KeyDown += ComboBox_KeyDown;
-		}
-
         /// <summary>
-        /// This is a hack to cope with the fact that, when we start getting completions, we open the dropdown, 
-        /// which causes the current text in the combobox to be selected for some reason
-        /// 
-        /// TODO: should probably actually figure out the root cause of this
+        /// True when the model is changing the UI, which means we want to ignore events coming from
+        /// the UI complaining about how it's getting changed and change is scary
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void DeselectText(object sender, EventArgs e)
-        {
-            var textBox = TextBoxPart;
-            textBox.SelectionLength = 0;
-            textBox.SelectionStart = textBox.Text.Length;
-        }
-
-        EveItemDropDownModel ViewModel
-        {
-            get { return m_ViewModel; }
-        }
-
-        TextBox TextBoxPart
-        {
-            get { return (TextBox)ComboBox.Template.FindName("PART_EditableTextBox", ComboBox); }
-        }
+        private bool m_InModelUpdate;
 
         public string SelectedName
         {
-            get
-            {
-                return m_ViewModel != null ? m_ViewModel.SelectedName : null;
-            }
+            get { return (string)GetValue(SelectedNameProperty); }
+            protected set { SetValue(SelectedNameProperty, value); }
         }
 
-        public TypeID SelectedID
+        // Using a DependencyProperty as the backing store for SelectedName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedNameProperty =
+            DependencyProperty.Register("SelectedName", typeof(string), typeof(EveItemDropDown));
+
+        public TypeID SelectedTypeID
         {
-            get
-            {
-                return m_ViewModel != null ? m_ViewModel.SelectedID : null;
-            }
+            get { return (TypeID)GetValue(SelectedTypeIDProperty); }
+            protected set { SetValue(SelectedTypeIDProperty, value); }
         }
 
-        private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs args)
+        // Using a DependencyProperty as the backing store for SelectedTypeID.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedTypeIDProperty =
+            DependencyProperty.Register("SelectedTypeID", typeof(TypeID), typeof(EveItemDropDown));
+
+        private EveItemDropDownCompletionsModel m_ViewModel;
+
+		public EveItemDropDown()
         {
-            switch (args.PropertyName) {
-                case "SelectedName":
-                case "SelectedID":
-                    NotifyPropertyChangedBase.FirePropertyChanged(args.PropertyName, PropertyChanged, this);
+            InitializeComponent();
+            m_ViewModel = new EveItemDropDownCompletionsModel();
+            DataContext = ViewModel;
+            PART_TextBox.TextChanged += PART_TextBox_TextChanged;
+            ViewModel.CompletionsChanged += ViewModel_CompletionsChanged;
+            PART_CompletionList.KeyDown += PART_CompletionList_KeyDown;
+            PART_TextBox.PreviewKeyDown += PART_TextBox_PreviewKeyDown;
+            //LostFocus += EveItemDropDown_LostFocus;
+
+            // this forces the item to be rendered - TextBoxPart will be null otherwise
+            //Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+		}
+
+        void PART_TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                // the completion list cares about these events 
+                case Key.Enter:
+                case Key.Escape:
+                case Key.Up:
+                case Key.PageUp:
+                case Key.Down:
+                case Key.PageDown:
+                    PART_CompletionList.Focus();
+                    PART_CompletionList.RaiseEvent(e);
                     break;
             }
         }
 
-        /// <summary>
-        /// This is some hacky code to ensure that the selected item and text etc are 
-        /// in sync when we select something, or cancel out of the dropdown. 
-        /// </summary>
-        private void FinishOrCancelSelection(object ignored = null, EventArgs ignored2 = null)
+        void PART_CompletionList_KeyDown(object sender, KeyEventArgs e)
         {
-            m_ViewModel.DontPropagate = true;
-            // If we've just selected something, then m_ViewModel will contain that, otherwise 
-            // it will contain the previous thing we selected.
-            ComboBox.SelectedItem = m_ViewModel.SelectedItem;
-            ComboBox.Text = m_ViewModel.SelectedName;
-            m_ViewModel.DontPropagate = false;
-
-            try
+            switch (e.Key)
             {
-                TextBoxPart.CaretIndex = 0;
+                case Key.Enter:
+                    SelectItem((EveItem)PART_CompletionList.SelectedItem);
+                    IsDropDownOpen = false;
+                    e.Handled = true;
+                    break;
+
+                case Key.Escape:
+                    CancelSelection();
+                    e.Handled = true;
+                    break;
+
+                case Key.Up:
+                case Key.PageUp:
+                case Key.Down:
+                case Key.PageDown:
+                    break;
+
+                default:
+                    // if we're typing, we probably want to go back to the textbox
+                    PART_TextBox.Focus();
+                    PART_TextBox.RaiseEvent(e);
+                    break;
             }
-            catch { }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void ComboBox_KeyDown(object sender, KeyEventArgs e)
+        void EveItemDropDown_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Escape)
+            CancelSelection();
+        }
+
+        void ViewModel_CompletionsChanged(object sender, EventArgs e)
+        {
+            IsDropDownOpen = ViewModel.Items.Any();
+        }
+
+        void PART_TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!m_InModelUpdate)
             {
-                FinishOrCancelSelection();
-                e.Handled = true;
+                ViewModel.Input = PART_TextBox.Text;
             }
+        }
+
+        void DeselectText(object sender, EventArgs e)
+        {
+            var textBox = PART_TextBox;
+            textBox.SelectionLength = 0;
+            textBox.SelectionStart = textBox.Text.Length;
+        }
+
+        EveItemDropDownCompletionsModel ViewModel
+        {
+            get { return m_ViewModel; }
+        }
+
+        protected bool IsDropDownOpen
+        {
+            get { return PART_CompletionPopup.IsOpen; }
+            set { PART_CompletionPopup.IsOpen = value; }
+        }
+
+        private void SelectItem(EveItem item)
+        {
+            m_InModelUpdate = true;
+
+            SelectedName = item.Name;
+            SelectedTypeID = item.TypeID;
+            PART_TextBox.Text = item.Name;
+
+            m_InModelUpdate = false;
+        }
+
+        private void CancelSelection()
+        {
+            IsDropDownOpen = false;
+
+            m_InModelUpdate = true;
+            PART_TextBox.Text = SelectedName;
+            m_InModelUpdate = false;
         }
     }
 }

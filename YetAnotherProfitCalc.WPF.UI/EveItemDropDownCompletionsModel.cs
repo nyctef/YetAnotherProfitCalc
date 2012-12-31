@@ -12,18 +12,20 @@ namespace YetAnotherProfitCalc.WPF.UI
     [DebuggerDisplayAttribute("{ItemName}|{TypeID}")]
 	struct EveItem
 	{
-		public string ItemName { get; private set; }
+		public string Name { get; private set; }
         public TypeID TypeID { get; private set; }
 
-		public EveItem(string itemName, TypeID typeId) : this()
+		public EveItem(string name, TypeID typeId) : this()
 		{
-			ItemName = itemName;
+			Name = name;
 			TypeID = typeId;
 		}
 	}
 
-	class EveItemDropDownModel : NotifyPropertyChangedBase
+	class EveItemDropDownCompletionsModel : NotifyPropertyChangedBase
 	{
+        public event EventHandler<EventArgs> CompletionsChanged;
+
 		/// <summary>
 		/// delay in ms between changes in the dropdown and updating the potential completion list
 		/// </summary>
@@ -34,41 +36,7 @@ namespace YetAnotherProfitCalc.WPF.UI
 		/// </summary>
 		private readonly int m_MinCharacters;
 
-        private bool m_DropdownShouldBeOpen;
-        private EveItem m_SelectedItem;
-
         public ObservableCollection<EveItem> Items { get; private set; }
-
-        public bool DropdownShouldBeOpen { get { return m_DropdownShouldBeOpen; } set { m_DropdownShouldBeOpen = value; } }
-
-        public EveItem SelectedItem 
-        { 
-            get { return m_SelectedItem; } 
-            set 
-            { 
-                m_SelectedItem = value;
-                FirePropertyChanged("SelectedName");
-                FirePropertyChanged("SelectedID");
-            } 
-        }
-
-        public string SelectedName
-        {
-            get
-            {
-                var item = SelectedItem;
-                return !item.Equals(default(EveItem)) ? item.ItemName : null;
-            }
-        }
-
-        public TypeID SelectedID
-        {
-            get
-            {
-                var item = SelectedItem;
-                return !item.Equals(default(EveItem)) ? item.TypeID : new TypeID(0);
-            }
-        }
 
         public static IEnumerable<EveItem> Completions(string input)
         {
@@ -95,11 +63,10 @@ namespace YetAnotherProfitCalc.WPF.UI
                 {
                     UpdateItems(Completions(value));
                 }
-                UpdateProperty("DropdownShouldBeOpen", ref m_DropdownShouldBeOpen, updateNeeded);
             }
 		}
 
-		public EveItemDropDownModel(int delayms = 0, int minCharacters = 3)
+		public EveItemDropDownCompletionsModel(int delayms = 0, int minCharacters = 3)
 		{
 			m_Delayms = delayms;
 			m_MinCharacters = minCharacters;
@@ -113,11 +80,14 @@ namespace YetAnotherProfitCalc.WPF.UI
 			{
 				Items.Add(item);
 			}
+
+            var handler = CompletionsChanged;
+            if (handler != null) handler(this, new EventArgs());
 		}
 	}
 
 	/// <summary>
-	/// An actor which runs on a background thread and delivers completion data to <see cref="EveItemDropDownModel"/>
+	/// An actor which runs on a background thread and delivers completion data to <see cref="EveItemDropDownCompletionsModel"/>
 	/// </summary>
 	class EveItemCompletionFetcher : DisposableBase
 	{
