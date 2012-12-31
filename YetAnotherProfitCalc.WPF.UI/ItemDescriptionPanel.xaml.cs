@@ -43,7 +43,7 @@ namespace YetAnotherProfitCalc.WPF.UI
     {
         private readonly ItemDescriptionModel m_Model; 
 
-        public static DependencyProperty ItemIDProperty = ItemDescriptionModel.ItemIDProperty.AddOwner(typeof(ItemDescriptionPanel), new FrameworkPropertyMetadata(ItemDescriptionPanel.ItemIDPropertyChangedCallback));
+        public static DependencyProperty TypeIDProperty = ItemDescriptionModel.TypeIDProperty.AddOwner(typeof(ItemDescriptionPanel), new FrameworkPropertyMetadata(ItemDescriptionPanel.TypeIDPropertyChangedCallback));
             
         public ItemDescriptionPanel()
         {
@@ -52,15 +52,15 @@ namespace YetAnotherProfitCalc.WPF.UI
             DataContext = m_Model;
         }
 
-        public TypeID ItemID
+        public TypeID TypeID
         {
-            get { return ((ItemDescriptionModel)DataContext).ItemID; }
-            set { ((ItemDescriptionModel)DataContext).ItemID = value; }
+            get { return ((ItemDescriptionModel)DataContext).TypeID; }
+            set { ((ItemDescriptionModel)DataContext).TypeID = value; }
         }
 
-        private static void ItemIDPropertyChangedCallback(DependencyObject controlInstance, DependencyPropertyChangedEventArgs args)
+        private static void TypeIDPropertyChangedCallback(DependencyObject controlInstance, DependencyPropertyChangedEventArgs args)
         {
-            ((ItemDescriptionPanel)controlInstance).m_Model.ItemID = (TypeID)args.NewValue;
+            ((ItemDescriptionPanel)controlInstance).m_Model.TypeID = (TypeID)args.NewValue;
         }  
 
     }

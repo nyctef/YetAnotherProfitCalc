@@ -11,16 +11,16 @@
     </UserControl.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
-            <TextBox Text="{Binding Path=ItemID,Converter={StaticResource TypeIDConverter}}" 
+            <TextBox Text="{Binding Path=TypeID,Converter={StaticResource TypeIDConverter}}" 
                      IsReadOnly="True"
                      Width="50"
                      DockPanel.Dock="Right"/>
-            <Label Content="{Binding ItemName}" 
+            <Label Content="{Binding Name}" 
                    Height="28" />
         </DockPanel>
         <ScrollViewer DockPanel.Dock="Bottom">
             <DockPanel>
-                <TextBlock Text="{Binding ItemDescription}" DockPanel.Dock="Top" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding Description}" DockPanel.Dock="Top" TextWrapping="Wrap"/>
                 <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Attributes}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Width="SizeToCells" IsReadOnly="True" Binding="{Binding Path=Attribute.DisplayName}"/>

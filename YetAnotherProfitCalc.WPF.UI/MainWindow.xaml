@@ -11,8 +11,8 @@
                     <DockPanel>
                         <local:EveItemDropDown x:Name="EIDD" DockPanel.Dock="Top"/>
                         <local:ItemDescriptionPanel 
-                            x:Name="ItemDescription" 
-                            ItemID="{Binding ElementName=EIDD,Path=SelectedTypeID,Mode=OneWay}" 
+                            x:Name="Description" 
+                            TypeID="{Binding ElementName=EIDD,Path=SelectedTypeID,Mode=OneWay}" 
                             />
                     </DockPanel>
                 </TabItem>

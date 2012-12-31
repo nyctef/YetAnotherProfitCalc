@@ -87,6 +87,8 @@ namespace YetAnotherProfitCalc.WPF.UI
             switch (e.Key)
             {
                 case Key.Enter:
+                    if (PART_CompletionList.SelectedIndex < 0) 
+                        PART_CompletionList.SelectedIndex = 0;
                     SelectItem((EveItem)PART_CompletionList.SelectedItem);
                     IsDropDownOpen = false;
                     e.Handled = true;
