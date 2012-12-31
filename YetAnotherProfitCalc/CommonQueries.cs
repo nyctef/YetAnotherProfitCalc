@@ -99,9 +99,9 @@ WHERE r.typeID = {0}
             return new GroupID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
         }
 
-        public static CategoryID GetCategoryID(this GroupID groupID)
+        public static CategoryID GetCategoryID(this GroupID groupId)
         {
-            var query = @"select categoryID from invTypes where groupID = " + groupID + ";";
+            var query = @"select categoryID from invTypes where groupID = " + groupId + ";";
             return new CategoryID(DefaultDatabase.RunSQLStringQuery(query).ToInt());
         }
 
@@ -127,7 +127,7 @@ WHERE r.typeID = {0}
             using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))
             {
                 cnn.Open();
-                var query = @"select typeID from invMetaTypes where parentTypeID = " + matID + " and metaGroupID = " + metaGroupID;
+                var query = @"select typeId from invMetaTypes where parentTypeID = " + matID + " and metaGroupID = " + metaGroupID;
                 var results = DefaultDatabase.RunSQLTableQuery(query, cnn);
                 var t1Name = CommonQueries.GetTypeName(matID);
                 while (results.Read())
@@ -151,21 +151,21 @@ WHERE r.typeID = {0}
 			}
 		}
 
-        public static string GetTypeName(TypeID typeID)
+        public static string GetTypeName(TypeID typeId)
         {
-            var query = @"select typeName from invTypes where typeID = " + typeID + ";";
+            var query = @"select typeName from invTypes where typeID = " + typeId + ";";
             return DefaultDatabase.RunSQLStringQuery(query);
         }
 
-        public static string GetTypeDescription(TypeID typeID)
+        public static string GetTypeDescription(TypeID typeId)
         {
-            var query = @"select description from invTypes where typeID = " + typeID + ";";
+            var query = @"select description from invTypes where typeID = " + typeId + ";";
             return DefaultDatabase.RunSQLStringQuery(query);
         }
 
-        public static string GetGroupName(GroupID groupID)
+        public static string GetGroupName(GroupID groupId)
         {
-            var query = @"select groupName from invGroups where groupID = " + groupID + ";";
+            var query = @"select groupName from invGroups where groupID = " + groupId + ";";
             return DefaultDatabase.RunSQLStringQuery(query);
         }
 
@@ -234,14 +234,14 @@ WHERE r.typeID = {0}
             return factor * (wasteFactor/10.0m);
         }
 
-        public static List<AttributeValue> GetAttributesForType(TypeID typeID)
+        public static List<AttributeValue> GetAttributesForType(TypeID typeId)
         {
             var query = @"
 SELECT ta.attributeID, valueInt, valueFloat, attributeName, at.description, at.displayName, at.categoryID, u.unitID, u.unitName, u.displayName, u.description
 FROM dgmTypeAttributes AS ta
 INNER JOIN dgmAttributeTypes AS at ON ta.attributeID = at.attributeID
 INNER JOIN eveUnits AS u ON at.unitID = u.unitID
-WHERE ta.typeID = "+typeID.ToInt()+@"
+WHERE ta.typeID = "+typeId.ToInt()+@"
 LIMIT 100
 ";
             using (var cnn = new SQLiteConnection(DefaultDatabase.dbConnection))

@@ -9,43 +9,43 @@ namespace YetAnotherProfitCalc
     /*
      * Ideas:
      * add bundlingpriceprovider which groups multiple requests within x time of each other into one request
-     * change interface so it can take multiple typeIDs at once and do a bundle request
+     * change interface so it can take multiple typeIds at once and do a bundle request
      * 
      */
 
 	internal interface IPriceProvider
 	{
-		ISK GetPrice(TypeID typeID);
-		Task<ISK> GetPriceAsync(TypeID typeID);
+		ISK GetPrice(TypeID typeId);
+		Task<ISK> GetPriceAsync(TypeID typeId);
 	}
 
 	internal class BasicEveCentralJitaPriceProvider : IPriceProvider
 	{
-		public ISK GetPrice(TypeID typeID)
+		public ISK GetPrice(TypeID typeId)
 		{
-			var result = FetchEveCentralPrice.FetchPrice(typeID.ToInt(), 10000002, 30000142);
-			//Console.WriteLine("Price of " + CommonQueries.GetTypeName(typeID) + " is " + result);
+			var result = FetchEveCentralPrice.FetchPrice(typeId.ToInt(), 10000002, 30000142);
+			//Console.WriteLine("Price of " + CommonQueries.GetTypeName(typeId) + " is " + result);
 			return new ISK(result);
 		}
 
-		public async Task<ISK> GetPriceAsync(TypeID typeID)
+		public async Task<ISK> GetPriceAsync(TypeID typeId)
 		{
-			var result = await FetchEveCentralPrice.FetchPriceAsync(typeID.ToInt(), 10000002, 30000142);
+			var result = await FetchEveCentralPrice.FetchPriceAsync(typeId.ToInt(), 10000002, 30000142);
 			return new ISK(result);
 		}
 	}
 
     internal class BasicEveCentralDelvePriceProvider : IPriceProvider
     {
-        public ISK GetPrice(TypeID typeID)
+        public ISK GetPrice(TypeID typeId)
         {
-            var result = FetchEveCentralPrice.FetchPrice(typeID.ToInt(), 10000060);
+            var result = FetchEveCentralPrice.FetchPrice(typeId.ToInt(), 10000060);
             return new ISK(result);
         }
 
-        public async Task<ISK> GetPriceAsync(TypeID typeID)
+        public async Task<ISK> GetPriceAsync(TypeID typeId)
         {
-            var result = await FetchEveCentralPrice.FetchPriceAsync(typeID.ToInt(), 10000060);
+            var result = await FetchEveCentralPrice.FetchPriceAsync(typeId.ToInt(), 10000060);
             return new ISK(result);
         }
     }
@@ -60,21 +60,21 @@ namespace YetAnotherProfitCalc
             this.baseProvider = baseProvider;
         }
 
-        public ISK GetPrice(TypeID typeID)
+        public ISK GetPrice(TypeID typeId)
         {
-            if (cache.ContainsKey(typeID)) return cache[typeID];
+            if (cache.ContainsKey(typeId)) return cache[typeId];
 
-            var result = baseProvider.GetPrice(typeID);
-            cache[typeID] = result;
+            var result = baseProvider.GetPrice(typeId);
+            cache[typeId] = result;
             return result;
         }
         
-        public async Task<ISK> GetPriceAsync(TypeID typeID)
+        public async Task<ISK> GetPriceAsync(TypeID typeId)
 		{
-            if (cache.ContainsKey(typeID)) return cache[typeID];
+            if (cache.ContainsKey(typeId)) return cache[typeId];
 
-            var result = await baseProvider.GetPriceAsync(typeID);
-            cache[typeID] = result;
+            var result = await baseProvider.GetPriceAsync(typeId);
+            cache[typeId] = result;
             return result;
 		}
     }

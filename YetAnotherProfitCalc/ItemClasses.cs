@@ -13,7 +13,7 @@ namespace YetAnotherProfitCalc
 	/// <summary>
 	/// Wrap around a type (usually a numeric value type like long or decimal) to give it extra type safety
 	/// </summary>
-	/// <remarks>This is mostly used to make sure that typeIDs, blueprint IDs, groupIDs etc don't get all mixed up</remarks>
+	/// <remarks>This is mostly used to make sure that typeIds, blueprint IDs, groupIds etc don't get all mixed up</remarks>
 	/// <typeparam name="T">The type to wrap around</typeparam>
     public class PrimitiveWrapper<T> : IEquatable<PrimitiveWrapper<T>>, IComparable<PrimitiveWrapper<T>> where T : IComparable<T>
     {
@@ -79,7 +79,7 @@ namespace YetAnotherProfitCalc
 
     public class GroupID : PrimitiveWrapper<int>
     {
-        #region groupIDs
+        #region groupIds
         public static readonly GroupID DataInterfaces = new GroupID(716);
         public static readonly GroupID Battlecruiser = new GroupID(419);
         public static readonly GroupID Battleship = new GroupID(27);
@@ -215,9 +215,9 @@ namespace YetAnotherProfitCalc
                     return new PrefixUnit(id, name, dName, desc);
                 case 139: // (Bonus) +X
                     return new BonusUnit(id, name, dName, desc);
-                case 115: // groupID
+                case 115: // groupId
                     return new GroupIdUnit(id, name, dName, desc);
-                case 116: // typeID
+                case 116: // typeId
                     return new TypeIdUnit(id, name, dName, desc);
                 case 117: // size
                     return new SizeClassUnit(id, name, dName, desc);

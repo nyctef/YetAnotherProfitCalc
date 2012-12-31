@@ -137,23 +137,23 @@ namespace YetAnotherProfitCalc
 
         public decimal BaseInventionChance() 
         {
-            var typeID = Product;
-            var groupID = CommonQueries.GetGroupID(Product);
+            var typeId = Product;
+            var groupId = CommonQueries.GetGroupID(Product);
 
-            if (groupID == GroupID.Battlecruiser || groupID == GroupID.Battleship ||
-                typeID == CommonQueries.GetTypeID("Covetor")) 
+            if (groupId == GroupID.Battlecruiser || groupId == GroupID.Battleship ||
+                typeId == CommonQueries.GetTypeID("Covetor")) 
             {
                 return 0.2m;
             }
 
-            if (groupID == GroupID.Cruiser || groupID == GroupID.Industrial ||
-                typeID == CommonQueries.GetTypeID("Retriever")) 
+            if (groupId == GroupID.Cruiser || groupId == GroupID.Industrial ||
+                typeId == CommonQueries.GetTypeID("Retriever")) 
             {
                 return 0.25m;
             }
 
-            if (groupID == GroupID.Frigate || groupID == GroupID.Destroyer ||
-                groupID == GroupID.Freighter || typeID == CommonQueries.GetTypeID("Procurer"))
+            if (groupId == GroupID.Frigate || groupId == GroupID.Destroyer ||
+                groupId == GroupID.Freighter || typeId == CommonQueries.GetTypeID("Procurer"))
             {
                 return 0.3m;
             }
