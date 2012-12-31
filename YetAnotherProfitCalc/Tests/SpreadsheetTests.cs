@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace YetAnotherProfitCalc.Tests
 {
+    [TestFixture]
     public class SpreadsheetTests
     {
         [Test]
@@ -32,6 +33,7 @@ namespace YetAnotherProfitCalc.Tests
         }
     }
 
+    [TestFixture]
     class InventionBlueprintTests
     {
         [TestCase("Stiletto", null)]
@@ -45,6 +47,7 @@ namespace YetAnotherProfitCalc.Tests
         }
     }
 
+    [TestFixture]
     public class ManufacturingSpreadsheetTests
     {
         [TestCase("Medium Trimark Armor Pump I")]

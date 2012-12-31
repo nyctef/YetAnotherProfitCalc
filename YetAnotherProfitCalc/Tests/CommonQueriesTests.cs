@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace YetAnotherProfitCalc.Tests
 {
+    [TestFixture]
     class CommonQueriesTests
     {
         [TestCase(0, 10, Result = 0.1)]
@@ -41,6 +42,7 @@ namespace YetAnotherProfitCalc.Tests
         }
     }
 
+    [TestFixture]
     class FetchEveCentralPriceTests
     {
         [TestCase(25601)]

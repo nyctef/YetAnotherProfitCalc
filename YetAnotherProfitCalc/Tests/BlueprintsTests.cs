@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace YetAnotherProfitCalc.Tests
 {
-
+    [TestFixture]
     public class BlueprintsTests
     {
         [Test]
@@ -130,7 +130,7 @@ namespace YetAnotherProfitCalc.Tests
             Console.WriteLine("t2 manufacture time: " + (t2bp.ManufacturingTime() * t2runs).FormatSeconds());
         }
 
-        [TestCase(@" Drake 1 Battlecruiser")]
+        [TestCase(" Drake\t1 Battlecruiser")]
         public void TestContractValue(string contractPaste)
         {
             var mats = new Dictionary<MaterialID, int>();
