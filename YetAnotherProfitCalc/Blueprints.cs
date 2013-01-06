@@ -264,7 +264,7 @@ namespace YetAnotherProfitCalc
         public static List<BPMaterial> AdjustForMEWastage(this IEnumerable<BPMaterial> mats, int ME, int wasteFactor = 10)
         {
             var meWastageFactor = 1 + CommonQueries.GetWasteForME(ME, wasteFactor);
-            return mats.Select(m => new BPMaterial(m.matID, (long)(m.quantity * meWastageFactor))).ToList();
+            return mats.Select(m => new BPMaterial(m.matID, (long)Math.Round(m.quantity * meWastageFactor, 0, MidpointRounding.AwayFromZero))).ToList();
         }
 
 		public static ISK GetPrice(/* [NotNull] */ this IEnumerable<BPMaterial> materials, /* [NotNull] */ IPriceProvider priceProvider)
