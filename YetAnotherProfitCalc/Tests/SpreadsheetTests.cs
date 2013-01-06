@@ -50,8 +50,8 @@ namespace YetAnotherProfitCalc.Tests
     [TestFixture]
     public class ManufacturingSpreadsheetTests
     {
-        [TestCase("Medium Trimark Armor Pump I")]
-        [TestCase("Warrior II")]
+        [TestCase("Large Trimark Armor Pump I")]
+        //[TestCase("Warrior II")]
         public void MedTrimark(string typeName)
         {
             var bp = new T1Blueprint(CommonQueries.GetBlueprintID(typeName), 2, 0);

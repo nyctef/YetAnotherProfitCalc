@@ -88,6 +88,7 @@ namespace YetAnotherProfitCalc
         public static readonly GroupID Frigate = new GroupID(25);
         public static readonly GroupID Destroyer = new GroupID(420);
         public static readonly GroupID Freighter = new GroupID(513);
+        public static readonly GroupID RigBlueprint = new GroupID(787);
 
         #endregion
 

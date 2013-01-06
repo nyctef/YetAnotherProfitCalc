@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -178,6 +180,77 @@ namespace YetAnotherProfitCalc.Tests
                 var profit = productPrice.ToDecimal() - totalPrice;
                 Console.WriteLine("Profit: " + profit.FormatISK());
             }
+        }
+
+        [Test]
+        public void RigsToMake()
+        {
+            var prices = new BasicPriceCache(new BasicEveCentralJitaPriceProvider());
+
+            var groupID = GroupID.RigBlueprint;
+
+            var results = new Dictionary<string, Tuple<decimal, ISK, ISK, ISK>>();
+
+            var blueprintsQuery = @"select typeID from invTypes where groupID = "+groupID+" and published = 1;";
+            using (var conn = new SQLiteConnection(CommonQueries.DefaultDatabase.dbConnection))
+            {
+                conn.Open();
+                var reader = CommonQueries.DefaultDatabase.RunSQLTableQuery(blueprintsQuery, conn);
+                while (reader.Read())
+                {
+                    var bpId = new BlueprintID(reader["typeID"].ToInt());
+                    var bp = new T1Blueprint(bpId, 2, 0);
+                    var name = CommonQueries.GetTypeName(bp.Product);
+                    if (name.Contains("II")) continue;
+
+                    Console.WriteLine(name);
+                    var cost = bp.Materials.GetPrice(prices);
+                    var price = prices.GetPrice(bp.Product);
+                    var profit = new ISK(price.ToDecimal() - cost.ToDecimal());
+                    var markup = profit.ToDecimal() / cost.ToDecimal();
+
+                    results.Add(name, new Tuple<decimal, ISK, ISK, ISK>(markup, cost, price, profit));
+
+                    //Console.WriteLine("Cost:   " + cost);
+                    //Console.WriteLine("Price:  " + price);
+                    //Console.WriteLine("Profit: " + profit);
+                    //Console.WriteLine("Markup: " + markup*100);
+                    //Console.WriteLine();
+
+                    Thread.Sleep(50);
+                }
+            }
+
+            // results
+            foreach (var result in 
+                results
+                .OrderByDescending(result => result.Value.Item1)
+                .Where(result => result.Value.Item4.ToDecimal() > 100*1000)
+                .Take(10))
+            {
+                Console.WriteLine(result.Key);
+                Console.WriteLine("Cost:   " + result.Value.Item2);
+                Console.WriteLine("Price:  " + result.Value.Item3);
+                Console.WriteLine("Profit: " + result.Value.Item4);
+                Console.WriteLine("Markup: " + result.Value.Item1 * 100);
+                Console.WriteLine();
+            }
+
+            // results
+            foreach (var result in
+                results
+                .OrderByDescending(result => result.Value.Item4)
+                .Where(result => result.Value.Item1 > 0.1m)
+                .Take(10))
+            {
+                Console.WriteLine(result.Key);
+                Console.WriteLine("Cost:   " + result.Value.Item2);
+                Console.WriteLine("Price:  " + result.Value.Item3);
+                Console.WriteLine("Profit: " + result.Value.Item4);
+                Console.WriteLine("Markup: " + result.Value.Item1 * 100);
+                Console.WriteLine();
+            }
+
         }
     }
 }
